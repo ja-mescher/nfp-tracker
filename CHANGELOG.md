@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - CHANGELOG
 - LICENSE
 - homepage and deploy scripts to package.json file.
-- PWA standalone setup.
+- Standalone settings for PWA support.
 
 ### Changed
 - Manifest to display project name.
