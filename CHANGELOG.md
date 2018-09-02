@@ -19,3 +19,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 - Default logo svg.
+
+[0.0.1]: https://github.com/ja-mescher/nfp-tracker/releases/tag/0.0.1
