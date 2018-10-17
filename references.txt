@@ -1,0 +1,3 @@
+https://medium.com/quick-code/adding-authentication-to-react-redux-firebase-app-f0efcb1c519a
+
+https://github.com/codewithbernard/react-redux-firebase/blob/master/src/components/SignIn.js

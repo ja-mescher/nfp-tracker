@@ -1,10 +1,20 @@
 import { combineReducers } from 'redux'
 import {
+  FETCH_USER,
   OPEN_OBSERVATION,
   ADD_OBSERVATION,
   MODIFY_OBSERVATION,
   DELETE_OBSERVATION
-} from '../actions'
+} from '../actions/types'
+
+const user = (state = null, action) => {
+  switch(action.type) {
+    case FETCH_USER:
+      return action.payload
+    default:
+      return state
+  }
+}
 
 const observations = (state = [], action) => {
   switch(action.type) {
@@ -35,6 +45,7 @@ const openObservationId = (state = null, action) => {
 }
 
 export default combineReducers({
+  user,
   observations,
   openObservationId
 })
