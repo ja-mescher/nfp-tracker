@@ -1,9 +1,9 @@
 export const FlowOptions = {
   NONE: 0,
-  HEAVY: 1,
-  MODERATE: 2,
-  LIGHT: 3,
-  VERY_LIGHT: 4,
+  HEAVY: 4,
+  MODERATE: 3,
+  LIGHT: 2,
+  VERY_LIGHT: 1,
   BROWN: 5
 }
 
@@ -16,10 +16,6 @@ export const FlowOptionsList = [
 ]
 
 export const FlowDescriptions = {
-  [FlowOptions.NONE]: {
-    shortDesc: '---',
-    longDesc: 'None'
-  },
   [FlowOptions.HEAVY]: {
     shortDesc: 'H',
     longDesc: 'Heavy'
@@ -58,12 +54,12 @@ export const ConsistencyOptions = {
 
 export const ConsistencyOptionsList = [
   ConsistencyOptions.DRY,
+  ConsistencyOptions.STICKY,
+  ConsistencyOptions.TACKY,
+  ConsistencyOptions.STRETCHY,
   ConsistencyOptions.DAMP,
   ConsistencyOptions.WET,
   ConsistencyOptions.SHINY,
-  ConsistencyOptions.STICKY,
-  ConsistencyOptions.TACKY,
-  ConsistencyOptions.STRETCHY
 ]
 
 export const ConsistencyDescriptions = {
@@ -154,3 +150,34 @@ export const ColorDescriptions = {
     longDesc: 'Yellow'
   }
 }
+
+export const observationTypeOptions = {
+  'consistency': {
+    optionsList: ConsistencyOptionsList,
+    optionsDesc: ConsistencyDescriptions
+  },
+  'flow': {
+    optionsList: FlowOptionsList,
+    optionsDesc: FlowDescriptions
+  },
+  'color': {
+    optionsList: ColorOptionsList,
+    optionsDesc: ColorDescriptions
+  },
+}
+
+export const observationTypesList = [
+  'consistency',
+  'color',
+  'flow'
+]
+
+// date - calendar
+// flow - select 1
+// consistency - select 1
+// color - select many
+// sensation - boolean
+// observation count - select 1
+// intercourse - boolean
+// peak - boolean
+// notes

@@ -1,10 +1,10 @@
 {
   "name": "nfp-tracker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "homepage": "http://gitname.github.io/nfp-tracker",
   "dependencies": {
-    "@material-ui/core": "^3.1.1",
+    "@material-ui/core": "^3.3.2",
     "@material-ui/icons": "^3.0.1",
     "firebase": "^5.4.2",
     "moment": "^2.22.2",

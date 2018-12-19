@@ -1,10 +1,24 @@
-import { authRef } from '../config/firebase'
-import { FETCH_USER } from "./types";
+import { authRef, databaseRef } from '../config/firebase'
+import {
+  FETCH_USER,
+  FETCH_USER_PROFILES,
+  FETCH_PROFILE_OBSERVATIONS,
+  CHANGE_OBSERVATION
+} from "./types";
+
+var firebaseUnsubscribes = {}
+
+export const unsubscribeFirebaseListener = (listenerId) => {
+  var unsubscribe = firebaseUnsubscribes[listenerId]
+  unsubscribe()
+  delete firebaseUnsubscribes[listenerId]
+}
 
 export const fetchUser = () => dispatch => {
   authRef
     .onAuthStateChanged(user => {
       if (user) {
+        dispatch(fetchUserProfiles(user))
         dispatch({
           type: FETCH_USER,
           payload: user
@@ -17,6 +31,46 @@ export const fetchUser = () => dispatch => {
       }
     });
 };
+
+export const fetchUserProfiles = (user) => async dispatch => {
+  firebaseUnsubscribes[FETCH_USER_PROFILES] = databaseRef
+    .collection("profiles")
+    .where("users", "array-contains", user.uid)
+    .get()
+    .then((doc) => {
+      // var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+      // console.log(doc.empty)
+      console.log(doc)
+      // console.log(source, " data: ", doc.docs.length);
+      dispatch({
+        type: FETCH_USER_PROFILES,
+        payload: doc.docs.map(doc => Object.assign({documentId: doc.id}, doc.data()))
+      });
+      if(doc.docs.length === 1) dispatch(fetchProfileObservations(doc.docs[0].id))
+    });
+};
+
+export const fetchProfileObservations = (documentId) => async dispatch => {
+  firebaseUnsubscribes[FETCH_PROFILE_OBSERVATIONS] = databaseRef
+    .collection("profiles")
+    .doc(documentId)
+    .collection("observations")
+    .onSnapshot(snapshot => {
+      if(!snapshot.size) return null;
+
+      snapshot.docChanges().forEach(change => {
+        dispatch({
+          type: CHANGE_OBSERVATION,
+          changeType: change.type,
+          payload: {
+            documentId: change.doc.id,
+            hasPendingWrites: change.doc.metadata.hasPendingWrites,
+            data: change.doc.data()
+          }
+        });
+      });
+    })
+}
 
 export const createUserWithEmailAndPassword = (email, password) => async dispatch => {
   authRef
@@ -67,8 +121,11 @@ export const resetPassword = (email) => async dispatch => {
 //   observationId
 // })
 //
+// dateModified: moment.utc().format('x'),
 // export const addObservation = (
+//   observationId,
 //   date,
+//   dateModified,
 //   flow,
 //   consistency,
 //   sensation,
@@ -76,11 +133,12 @@ export const resetPassword = (email) => async dispatch => {
 //   observationCount,
 //   intercourse,
 //   peak,
-//   notes
+//   notes = ""
 // ) => ({
 //   type: ADD_OBSERVATION,
+//   observationId,
 //   date,
-//   dateModified: moment.utc().format('x'),
+//   dateModified,
 //   flow,
 //   consistency,
 //   sensation,

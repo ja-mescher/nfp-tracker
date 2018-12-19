@@ -1,146 +1,178 @@
-import React from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import compose from 'recompose/compose';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-// import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
-// import Typography from '@material-ui/core/Typography'
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+import TextField from '@material-ui/core/TextField';
+import {
+  Link,
+  Redirect
+} from "react-router-dom";
+import moment from 'moment'
 
-
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-
-import Checkbox from '@material-ui/core/Checkbox';
-import FormGroup from '@material-ui/core/FormGroup';
-
-import Paper from '@material-ui/core/Paper'
-
-import ObservationColorSelect from './ObservationColorSelect'
+import { observationTypesList, observationTypeOptions } from '../constants'
 
 const styles = theme => ({
-  paperContainers: {
-    margin: theme.spacing.unit * 2,
-    marginRight: theme.spacing.unit * 3,
-    marginLeft: theme.spacing.unit * 3,
-    padding: theme.spacing.unit * 2,
-  }
-})
+  root: {
+    width: '100%',
+    backgroundColor: theme.palette.background.paper,
+  },
+});
 
-const ObservationDetails = ({classes, fullScreen, isOpen, cancel}) => (
-  <div>
-    <Dialog
-      fullScreen={fullScreen}
-      open={true}
-      onClose={this.handleClose}
-      aria-labelledby="observation-details-title"
-    >
-      <DialogTitle id="bservation-details-title">{"New Observation Record"}</DialogTitle>
-      <DialogContent>
-        <Paper className={classes.paperContainers}>
-          <FormControl component="fieldset" className={classes.formControl}>
-            <FormLabel component="legend">Flow Amount</FormLabel>
-            <RadioGroup
-              aria-label="Gender"
-              name="gender1"
-              className={classes.group}
-              value={'female'}
-              onChange={this.handleChange}
+const capitalize = (s) => {
+  return s && s[0].toUpperCase() + s.slice(1);
+}
+
+const SelectionList = ({match, params}) => (
+    <List component="nav">
+      <ListItem
+        button
+      >
+        <ListItemText
+          primary={'Date'}
+          secondary={moment().format('dddd, MMMM Do')}
+        />
+      </ListItem>
+      <TextField
+        id="date"
+        label="Date"
+        type="date"
+        defaultValue="2017-05-24"
+        InputLabelProps={{
+          shrink: true,
+        }}
+      />
+      <Divider />
+      {observationTypesList.map(type => {
+        const descriptions = observationTypeOptions[type]['optionsDesc']
+        let value = null
+        if(params[type]) {
+          value = descriptions[params[type]]['shortDesc'] + " - " + descriptions[params[type]]['longDesc']
+        }
+        return (
+          <div key={type}>
+            <ListItem
+              button
+              component={Link}
+              to={{ pathname: match.url, search: `?edit=${type}`}}
             >
-              <FormControlLabel value="female" control={<Radio />} label="Female" />
-              <FormControlLabel value="male" control={<Radio />} label="Male" />
-              <FormControlLabel value="other" control={<Radio />} label="Other" />
-              <FormControlLabel
-                value="disabled"
-                disabled
-                control={<Radio />}
-                label="(Disabled option)"
+              <ListItemText
+                primary={value ? capitalize(type) : 'Add ' + capitalize(type)}
+                secondary={value}
               />
-            </RadioGroup>
-          </FormControl>
-        </Paper>
-        <Paper className={classes.paperContainers}>
-          <ObservationColorSelect />
-        </Paper>
-        <Paper className={classes.paperContainers}>
-          <FormControl component="fieldset" className={classes.formControl}>
-            <FormLabel component="legend">Consistency</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={false}
-                    onChange={() => {}}
-                    value="gilad" />
-                }
-                label="Gilad Gray"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={false}
-                    onChange={() => {}}
-                    value="jason" />
-                }
-                label="Jason Killian"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={false}
-                    onChange={() => {}}
-                    value="antoine"
-                  />
-                }
-                label="Antoine Llorca"
-              />
-            </FormGroup>
-          </FormControl>
-        </Paper>
-        <Paper className={classes.paperContainers}>
-          <FormControl component="fieldset" className={classes.formControl}>
-            <FormLabel component="legend">Color</FormLabel>
-            <RadioGroup
-              aria-label="Gender"
-              name="gender1"
-              className={classes.group}
-              value={'female'}
-              onChange={this.handleChange}
-            >
-              <FormControlLabel value="female" control={<Radio />} label="Female" />
-              <FormControlLabel value="male" control={<Radio />} label="Male" />
-              <FormControlLabel value="other" control={<Radio />} label="Other" />
-              <FormControlLabel
-                value="disabled"
-                disabled
-                control={<Radio />}
-                label="(Disabled option)"
-              />
-            </RadioGroup>
-          </FormControl>
-        </Paper>
-      </DialogContent>
-      <DialogActions>
-        <Button color="primary" onClick={cancel}>
-          Cancel
-        </Button>
-        <Button color="primary" variant="outlined" autoFocus>
-          Accept
-        </Button>
-      </DialogActions>
-    </Dialog>
-  </div>
+            </ListItem>
+            <Divider />
+          </div>
+        )
+      })}
+    </List>
 )
 
+class ParameterOptions extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      redirect: false
+    }
+  }
+
+  handleSelect = (value) => {
+    console.warn(this.props.paramType, value)
+    this.props.handleSelect(this.props.paramType, value)
+    this.setState({redirect: true})
+  }
+
+  clearSelection = () => {
+    this.props.clearSelection(this.props.paramType)
+    this.setState({redirect: true})
+  }
+
+  render() {
+    const { match, paramType, selectedOption } = this.props
+
+    if(this.state.redirect) {
+      return <Redirect to={match.url} />
+    }
+
+    const descriptions = observationTypeOptions[paramType]['optionsDesc']
+
+    return (
+      <List component="nav">
+        <ListItem
+          button
+          onClick={() => this.clearSelection()}
+        >
+            <ListItemText primary={'None'} />
+        </ListItem>
+        <Divider />
+        {observationTypeOptions[paramType]['optionsList'].map(option => {
+          return (
+          <div key={option}>
+            <ListItem
+              button
+              onClick={() => this.handleSelect(option)}
+              selected={selectedOption===option}
+            >
+                <ListItemText primary={descriptions[option]['shortDesc'] + " - " + descriptions[option]['longDesc']} />
+            </ListItem>
+            <Divider />
+          </div>
+          )
+        })}
+      </List>
+    )
+  }
+}
+
+class ObservationDetails extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      parameters: {}
+    }
+  }
+
+  handleParamModify = (paramName, value) => {
+    this.setState((state, props) => ({
+      parameters: {...state.parameters, [paramName]: value}
+    }));
+  }
+
+  clearParamSelection = (paramName) => {
+    this.setState((state, props) => {
+      let { [paramName]: omit, ...res } = state.parameters
+      console.log(paramName, res)
+      return {parameters: res}
+    });
+  }
+
+  render() {
+    const { classes, match } = this.props;
+    let params = new URLSearchParams(this.props.location.search);
+    const edit = params.get("edit")
+
+    return (
+      <div className={classes.root}>
+        {
+          edit ?
+          <ParameterOptions
+            match={match}
+            paramType={edit}
+            selectedOption={this.state.parameters[edit]}
+            handleSelect={this.handleParamModify}
+            clearSelection={this.clearParamSelection}
+          /> :
+          <SelectionList match={match} params={this.state.parameters}/>
+        }
+      </div>
+    );
+  }
+}
+
 ObservationDetails.propTypes = {
-  fullScreen: PropTypes.bool.isRequired,
+  classes: PropTypes.object.isRequired,
 };
 
-export default compose(withStyles(styles), withMobileDialog())(ObservationDetails);
+export default withStyles(styles)(ObservationDetails);
