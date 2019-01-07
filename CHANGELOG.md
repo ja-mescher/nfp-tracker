@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## 0.0.1 - 2018-12-19
+## 0.1.2 - 2019-01-06
+### Added
+- Calendar Day Card
+
+### Changed
+- Refined Calendar View, improving layout responsiveness
+- Moment.js dependencies to date-fns
+
+## 0.1.1 - 2018-12-19
 ### Added
 - Calendar View
 - Add Observation View

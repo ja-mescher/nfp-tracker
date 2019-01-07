@@ -49,7 +49,7 @@ class SignIn extends Component {
     return (
       <div>
         <Paper className={classes.root} elevation={2}>
-          <Typography variant="headline" component="h3">
+          <Typography variant="h5">
             Sign In
           </Typography>
           <TextField

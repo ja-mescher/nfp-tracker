@@ -29,7 +29,7 @@ class App extends Component {
         <BrowserRouter>
           <div className="App">
             <Switch>
-              <Route exact path="/signin" component={SignIn} />
+              <Route exact path="/(index.html)?" component={SignIn} />
               <Route exact path="/register" component={RegisterUser} />
               <PrivateRoute exact path="/profiles" component={Profiles} />
               <PrivateRoute path="/profiles/:profileId/observations" component={Observations} />

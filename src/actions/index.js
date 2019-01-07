@@ -3,7 +3,8 @@ import {
   FETCH_USER,
   FETCH_USER_PROFILES,
   FETCH_PROFILE_OBSERVATIONS,
-  CHANGE_OBSERVATION
+  CHANGE_OBSERVATION,
+  SET_VIEW_DATE
 } from "./types";
 
 var firebaseUnsubscribes = {}
@@ -111,9 +112,10 @@ export const resetPassword = (email) => async dispatch => {
     });
 }
 
-
-// import moment from 'moment'
-//
+export const setViewDate = (viewDate) => ({
+  type: SET_VIEW_DATE,
+  viewDate
+})
 
 //
 // export const openObservationId = (observationId) => ({
@@ -121,7 +123,7 @@ export const resetPassword = (email) => async dispatch => {
 //   observationId
 // })
 //
-// dateModified: moment.utc().format('x'),
+// dateModified: date.format('x'),
 // export const addObservation = (
 //   observationId,
 //   date,

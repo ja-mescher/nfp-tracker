@@ -7,7 +7,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import NavigateBeforeIcon from '@material-ui/icons/ArrowBackIos';
 import NavigateNextIcon from '@material-ui/icons/ArrowForwardIos';
-import moment from 'moment'
+import subMonths from 'date-fns/subMonths'
+import addMonths from 'date-fns/addMonths'
+import addDays from 'date-fns/addDays'
+import CalendarDay from '../containers/CalendarDay'
+import startOfMonth from 'date-fns/startOfMonth'
+import isAfter from 'date-fns/isAfter'
+import getDayOfYear from 'date-fns/getDayOfYear'
 
 const styles = theme => ({
   root: {
@@ -16,7 +22,6 @@ const styles = theme => ({
   	height: '100%',
   	display: 'flex',
   	flexDirection: 'column',
-
   },
   weekFlexContainer: {
 		flex: 1,
@@ -30,7 +35,7 @@ const styles = theme => ({
 		height: '20px',
     padding: '0px',
   },
-  dayFlex: {
+  dayFlexContainer: {
     display: 'flex',
 		flexDirection: 'column',
     justifyContent: 'center',
@@ -39,6 +44,7 @@ const styles = theme => ({
     boxSizing: 'border-box',
     borderStyle: 'solid hidden hidden solid',
     borderWidth: '1px',
+    borderColor: 'lightgrey',
     textAlign: 'center',
     minWidth: 0,
     padding: '0px'
@@ -61,31 +67,13 @@ const styles = theme => ({
   },
 });
 
-const CalendarDay = (props) => {
-  const { classes } = props;
-  return (
-    <div className={classes.dayFlex}>
-      hello
-    </div>
-  )
-}
-
-CalendarDay.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
 const CalendarWeek = (props) => {
-  const { classes } = props;
+  const { classes, startDate } = props;
+  const daysOfWeek = [0,1,2,3,4,5,6].map(i => addDays(startDate, i))
   return (
     <div className={classes.weekFlexContainer}>
       <div className={classes.weekFlexContent}>
-        <CalendarDay classes={classes}/>
-        <CalendarDay classes={classes}/>
-        <CalendarDay classes={classes}/>
-        <CalendarDay classes={classes}/>
-        <CalendarDay classes={classes}/>
-        <CalendarDay classes={classes}/>
-        <CalendarDay classes={classes}/>
+        {daysOfWeek.map(day => <CalendarDay key={getDayOfYear(day)} day={day}/>)}
       </div>
     </div>
   )
@@ -98,8 +86,8 @@ const WeekLabels = (props) => {
       <div className={classes.weekFlexContent}>
         {
           labels.map(label => (
-            <div className={classes.dayFlex}>
-              <Typography noWrap>{label}</Typography>
+            <div key={label} className={classes.dayFlexContainer}>
+              <Typography variant="body2" noWrap>{label}</Typography>
             </div>
           ))
         }
@@ -123,40 +111,51 @@ const weekdayLabels = [
 ]
 
 function Calendar(props) {
-  const { classes } = props;
+  const { classes, monthTitle, startOfWeeks, viewDate, setViewDate } = props;
+  // console.warn(startOfWeeks)
+  const today = new Date();
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
+          <IconButton
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="Menu"
+            onClick={()=>setViewDate(subMonths(viewDate,1))}
+          >
             <NavigateBeforeIcon />
           </IconButton>
           <Typography variant="h6" color="inherit" className={classes.grow}>
-            December
+            {monthTitle}
           </Typography>
-          <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
+          <IconButton
+            className={classes.menuButton}
+            color="inherit"
+            aria-label="Menu"
+            disabled={isAfter(startOfMonth(addMonths(viewDate,1)),today)}
+            onClick={()=>setViewDate(addMonths(viewDate,1))}
+          >
             <NavigateNextIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
       <WeekLabels classes={classes} labels={weekdayLabels}/>
-      <CalendarWeek classes={classes}/>
-      <WeekLabels classes={classes} labels={weekdayLabels}/>
-      <CalendarWeek classes={classes}/>
-      <WeekLabels classes={classes} labels={weekdayLabels}/>
-      <CalendarWeek classes={classes}/>
-      <WeekLabels classes={classes} labels={weekdayLabels}/>
-      <CalendarWeek classes={classes}/>
+      {
+        startOfWeeks.map((startDate, index) => {
+          return (
+            <CalendarWeek
+              key={getDayOfYear(startDate)}
+              classes={classes}
+              startDate={startDate}
+            />
+          )
+        })
+      }
     </div>
   );
 }
-
-const now = moment([2018,11])
-const first = now.startOf('month').week()
-let last = now.endOf('month').week()
-console.warn(now.weeksInYear())
-console.warn(now.isValid(), first, last, now.endOf('month').weekday())
 
 Calendar.propTypes = {
   classes: PropTypes.object.isRequired,

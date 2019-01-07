@@ -1,13 +1,14 @@
 {
   "name": "nfp-tracker",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "homepage": "http://gitname.github.io/nfp-tracker",
   "dependencies": {
     "@material-ui/core": "^3.3.2",
     "@material-ui/icons": "^3.0.1",
+    "classnames": "^2.2.6",
+    "date-fns": "^2.0.0-alpha.26",
     "firebase": "^5.4.2",
-    "moment": "^2.22.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
     "react-redux": "^5.0.7",

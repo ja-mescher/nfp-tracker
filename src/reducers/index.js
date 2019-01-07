@@ -5,7 +5,8 @@ import {
   CHANGE_OBSERVATION,
   ADD_OBSERVATION,
   MODIFY_OBSERVATION,
-  DELETE_OBSERVATION
+  DELETE_OBSERVATION,
+  SET_VIEW_DATE
 } from '../actions/types'
 
 const user = (state = null, action) => {
@@ -50,8 +51,18 @@ const observations = (state = {}, action) => {
   }
 }
 
+const viewDate = (state = new Date(), action) => {
+  switch(action.type) {
+    case SET_VIEW_DATE:
+      return action.viewDate
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   user,
   userProfiles,
-  observations
+  observations,
+  viewDate
 })
