@@ -2,10 +2,11 @@ import { authRef, databaseRef } from '../config/firebase'
 import {
   FETCH_USER,
   FETCH_USER_PROFILES,
-  FETCH_PROFILE_OBSERVATIONS,
   CHANGE_OBSERVATION,
   SET_VIEW_DATE
 } from "./types";
+import { Timestamp } from '../config/firebase'
+import format from 'date-fns/format'
 
 var firebaseUnsubscribes = {}
 
@@ -27,13 +28,13 @@ export const fetchUser = () => dispatch => {
       } else {
         dispatch({
           type: FETCH_USER,
-          payload: null
+          payload: false
         });
       }
     });
 };
 
-export const fetchUserProfiles = (user) => async dispatch => {
+export const fetchUserProfiles = (user) => dispatch => {
   firebaseUnsubscribes[FETCH_USER_PROFILES] = databaseRef
     .collection("profiles")
     .where("users", "array-contains", user.uid)
@@ -47,33 +48,10 @@ export const fetchUserProfiles = (user) => async dispatch => {
         type: FETCH_USER_PROFILES,
         payload: doc.docs.map(doc => Object.assign({documentId: doc.id}, doc.data()))
       });
-      if(doc.docs.length === 1) dispatch(fetchProfileObservations(doc.docs[0].id))
     });
 };
 
-export const fetchProfileObservations = (documentId) => async dispatch => {
-  firebaseUnsubscribes[FETCH_PROFILE_OBSERVATIONS] = databaseRef
-    .collection("profiles")
-    .doc(documentId)
-    .collection("observations")
-    .onSnapshot(snapshot => {
-      if(!snapshot.size) return null;
-
-      snapshot.docChanges().forEach(change => {
-        dispatch({
-          type: CHANGE_OBSERVATION,
-          changeType: change.type,
-          payload: {
-            documentId: change.doc.id,
-            hasPendingWrites: change.doc.metadata.hasPendingWrites,
-            data: change.doc.data()
-          }
-        });
-      });
-    })
-}
-
-export const createUserWithEmailAndPassword = (email, password) => async dispatch => {
+export const createUserWithEmailAndPassword = (email, password) => dispatch => {
   authRef
     .createUserWithEmailAndPassword(email, password)
     .catch((error) => {
@@ -81,7 +59,7 @@ export const createUserWithEmailAndPassword = (email, password) => async dispatc
     });
 }
 
-export const signInWithEmailAndPassword = (email, password) => async dispatch => {
+export const signInWithEmailAndPassword = (email, password) => dispatch => {
   console.log(email, password)
   authRef
     .signInWithEmailAndPassword(email, password)
@@ -101,7 +79,7 @@ export const signOut = () => dispatch => {
     });
 };
 
-export const resetPassword = (email) => async dispatch => {
+export const resetPassword = (email) => dispatch => {
   authRef
     .sendPasswordResetEmail(email)
     .then(() => {
@@ -116,6 +94,41 @@ export const setViewDate = (viewDate) => ({
   type: SET_VIEW_DATE,
   viewDate
 })
+
+export const fetchObservations = (profileId, startDate, endDate) => (dispatch, getState) => {
+  return databaseRef
+    .collection("profiles")
+    .doc(profileId)
+    .collection("observations")
+    .where('date', '>=', new Timestamp.fromDate(startDate))
+    .where('date', '<=', new Timestamp.fromDate(endDate))
+    .onSnapshot(snapshot => {
+      if(!snapshot.size) return null;
+
+      snapshot.docChanges().forEach(change => {
+        var data = change.doc.data()
+        data.date = data.date.toDate()
+        dispatch({
+          type: CHANGE_OBSERVATION,
+          changeType: change.type,
+          payload: {
+            documentId: change.doc.id,
+            hasPendingWrites: change.doc.metadata.hasPendingWrites,
+            data
+          }
+        });
+      });
+    })
+}
+
+export const setObservationData = (profileId, date, dataFieldsObject) => (dispatch, getState) => {
+  return databaseRef
+    .collection("profiles")
+    .doc(profileId)
+    .collection("observations")
+    .doc(format(date, 'yyyyMMdd'))
+    .set({date, ...dataFieldsObject})
+}
 
 //
 // export const openObservationId = (observationId) => ({

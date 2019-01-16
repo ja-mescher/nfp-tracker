@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -13,6 +13,7 @@ import addDays from 'date-fns/addDays'
 import CalendarDay from '../containers/CalendarDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import isAfter from 'date-fns/isAfter'
+import isEqual from 'date-fns/isEqual'
 import getDayOfYear from 'date-fns/getDayOfYear'
 
 const styles = theme => ({
@@ -110,51 +111,80 @@ const weekdayLabels = [
   'Sat'
 ]
 
-function Calendar(props) {
-  const { classes, monthTitle, startOfWeeks, viewDate, setViewDate } = props;
-  // console.warn(startOfWeeks)
-  const today = new Date();
+class Calendar extends Component {
+  constructor(props) {
+    super(props);
+    this.unsubscribe = null;
+  }
 
-  return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu"
-            onClick={()=>setViewDate(subMonths(viewDate,1))}
-          >
-            <NavigateBeforeIcon />
-          </IconButton>
-          <Typography variant="h6" color="inherit" className={classes.grow}>
-            {monthTitle}
-          </Typography>
-          <IconButton
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="Menu"
-            disabled={isAfter(startOfMonth(addMonths(viewDate,1)),today)}
-            onClick={()=>setViewDate(addMonths(viewDate,1))}
-          >
-            <NavigateNextIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <WeekLabels classes={classes} labels={weekdayLabels}/>
-      {
-        startOfWeeks.map((startDate, index) => {
-          return (
-            <CalendarWeek
-              key={getDayOfYear(startDate)}
-              classes={classes}
-              startDate={startDate}
-            />
-          )
-        })
-      }
-    </div>
-  );
+  componentDidMount() {
+    const { fetchObservations, startDate, endDate, match: {params: {profileId}} } = this.props
+    if(startDate && endDate) {
+        this.unsubscribe = fetchObservations(profileId, startDate, endDate)
+    }
+  }
+
+  componentWillUnmount() {
+    if(this.unsubscribe) this.unsubscribe()
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const { fetchObservations, startDate, endDate, match: {params: {profileId}} } = this.props
+    if(
+      !isEqual(startDate, prevProps.startDate) ||
+      !isEqual(endDate, prevProps.endDate) ||
+      (profileId !== prevProps.match.params.profileId)
+    ) {
+      if(this.unsubscribe) this.unsubscribe()
+      this.unsubscribe = fetchObservations(profileId, startDate, endDate)
+    }
+  }
+
+  render() {
+    const { classes, monthTitle, startOfWeeks, viewDate, setViewDate } = this.props;
+    const today = new Date();
+
+    return (
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="Menu"
+              onClick={()=>setViewDate(subMonths(viewDate,1))}
+            >
+              <NavigateBeforeIcon />
+            </IconButton>
+            <Typography variant="h6" color="inherit" className={classes.grow}>
+              {monthTitle}
+            </Typography>
+            <IconButton
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="Menu"
+              disabled={isAfter(startOfMonth(addMonths(viewDate,1)),today)}
+              onClick={()=>setViewDate(addMonths(viewDate,1))}
+            >
+              <NavigateNextIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <WeekLabels classes={classes} labels={weekdayLabels}/>
+        {
+          startOfWeeks.map((startDate, index) => {
+            return (
+              <CalendarWeek
+                key={getDayOfYear(startDate)}
+                classes={classes}
+                startDate={startDate}
+              />
+            )
+          })
+        }
+      </div>
+    );
+  }
 }
 
 Calendar.propTypes = {

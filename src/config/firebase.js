@@ -26,3 +26,5 @@ databaseRef.enablePersistence()
   });
 export const authRef= firebase.auth();
 // export const todosRef = databaseRef.child("todos");
+
+export const Timestamp = firebase.firestore.Timestamp

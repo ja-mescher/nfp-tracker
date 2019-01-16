@@ -1,7 +1,6 @@
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
-import { Route, Switch } from "react-router-dom";
 import ObservationDetails from '../containers/ObservationDetails'
 
 function Transition(props) {
@@ -15,9 +14,11 @@ class FullScreenDialog extends React.Component {
 
   render() {
     const { pathname } = this.props.location;
+    const entryType = pathname.replace(this.props.match.url + '/', '')
     const isOpen = [
-      `${this.props.match.url}/add-new`
-    ].includes(pathname)
+      'add-new',
+      'modify'
+    ].includes(entryType)
 
     return (
       <div>
@@ -27,12 +28,10 @@ class FullScreenDialog extends React.Component {
           onClose={this.handleClose}
           TransitionComponent={Transition}
         >
-          <Switch>
-            <Route
-              path={`${this.props.match.url}/add-new`}
-              render={(props) => <ObservationDetails {...props} handleClose={this.handleClose} />}
-            />
-          </Switch>
+          <ObservationDetails
+            handleClose={this.handleClose}
+            entryType={entryType}
+          />
         </Dialog>
       </div>
     );

@@ -37,7 +37,7 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 }
 
-const SelectionList = ({match, params, date}) => (
+const SelectionList = ({location, params, date}) => (
     <List component="nav">
       <ListItem
         button
@@ -59,7 +59,7 @@ const SelectionList = ({match, params, date}) => (
             <ListItem
               button
               component={Link}
-              to={{ pathname: match.url, search: `?edit=${type}`}}
+              to={{ pathname: location.pathname, search: `?edit=${type}`}}
             >
               <ListItemText
                 primary={value ? capitalize(type) : 'Add ' + capitalize(type)}
@@ -93,10 +93,10 @@ class ParameterOptions extends Component {
   }
 
   render() {
-    const { match, paramType, selectedOption } = this.props
+    const { rootPath, paramType, selectedOption } = this.props
 
     if(this.state.redirect) {
-      return <Redirect to={match.url} />
+      return <Redirect to={rootPath} />
     }
 
     const descriptions = observationTypeOptions[paramType]['optionsDesc']
@@ -132,18 +132,25 @@ class ParameterOptions extends Component {
 class ObservationDetails extends Component {
   constructor(props) {
     super(props);
+    const { state: initialParameters } = this.props.location
     var date = undefined
-    if(this.props.location.state) {
-      date = this.props.location.state.date
+    var parameters = {}
+    if(initialParameters) {
+      date = initialParameters.date
+      if(initialParameters.data) {
+        parameters = initialParameters.data
+      }
     }
     this.state = {
-      parameters: {},
+      changesMade: false,
+      parameters,
       date
     }
   }
 
   handleParamModify = (paramName, value) => {
     this.setState((state, props) => ({
+      changesMade: true,
       parameters: {...state.parameters, [paramName]: value}
     }));
   }
@@ -160,19 +167,26 @@ class ObservationDetails extends Component {
     this.props.history.push(this.props.location.pathname)
   }
 
+  handleSave = () => {
+    const { match: {params: {profileId}}, setObservationData, handleClose } = this.props
+    const { date, parameters } = this.state
+    setObservationData(profileId, date, parameters).then(() => handleClose())
+  }
+
   capitalize = (s) => {
     return s && s[0].toUpperCase() + s.slice(1);
   }
 
   render() {
-    const { classes, match, location } = this.props;
+    const { classes, match, location, entryType } = this.props;
     let params = new URLSearchParams(location.search);
     const edit = params.get("edit")
     const { date } = this.state;
-
+    console.warn(match, location)
     if(!date) {
-      return <Redirect to={match.url.split('/add-new')[0]} />
+      return <Redirect to={match.url} />
     }
+    console.warn(this.state)
 
     let navigateButton = null
     let dialogTitle = null
@@ -197,7 +211,13 @@ class ObservationDetails extends Component {
           <CloseIcon />
         </IconButton>
       )
-      dialogTitle = "New Observation"
+      if(entryType === 'add-new') {
+        dialogTitle = "New Observation"
+      }
+      else {
+        dialogTitle = "Modify Observation"
+      }
+
     }
 
     return (
@@ -208,7 +228,7 @@ class ObservationDetails extends Component {
             <Typography variant="h6" color="inherit" className={classes.flex}>
               {dialogTitle}
             </Typography>
-            <Button color="inherit" disabled={!Object.values(this.state.parameters).length} onClick={this.props.handleClose}>
+            <Button color="inherit" disabled={!this.state.changesMade} onClick={this.handleSave}>
               save
             </Button>
           </Toolbar>
@@ -217,14 +237,14 @@ class ObservationDetails extends Component {
           {
             edit ?
             <ParameterOptions
-              match={match}
+              rootPath={location.pathname}
               paramType={edit}
               selectedOption={this.state.parameters[edit]}
               handleSelect={this.handleParamModify}
               clearSelection={this.clearParamSelection}
             /> :
             <SelectionList
-              match={match}
+              location={location}
               params={this.state.parameters}
               date={date}
             />

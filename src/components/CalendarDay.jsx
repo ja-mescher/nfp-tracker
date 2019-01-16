@@ -10,6 +10,8 @@ import isAfter from 'date-fns/isAfter'
 import isSameMonth from 'date-fns/isSameMonth'
 import classNames from 'classnames'
 
+import { observationTypesList, observationTypeOptions } from '../constants'
+
 const styles = theme => ({
   dayFlexContainer: {
     display: 'flex',
@@ -70,13 +72,38 @@ const styles = theme => ({
     left: '5%',
     right: '5%',
     bottom: '5%',
+    textTransform: 'capitalize',
   },
 })
 
 const CalendarDay = (props) => {
-  const { classes, match, day, viewDate } = props;
+  const { classes, location, day, viewDate, observationData } = props;
   const today = new Date();
   const isToday = isSameDay(day,today)
+
+  const observationDetails = []
+  var ariaLabel = "Add"
+  var linkToPathname = `${location.pathname}/add-new`
+  var linkState = {date: day}
+  if(observationData) {
+    const data = observationData.data
+    const filteredData = {}
+    observationTypesList.forEach(obsType => {
+      if(data.hasOwnProperty(obsType)) {
+        observationDetails.push(
+          <div key={obsType}>
+            {observationTypeOptions[obsType]['optionsDesc'][data[obsType]]['shortDesc']}
+          </div>
+        )
+        filteredData[obsType] = data[obsType]
+      }
+    })
+    if(observationDetails.length > 0) {
+      ariaLabel = "Modify"
+      linkToPathname = `${location.pathname}/modify`
+      linkState.data = filteredData
+    }
+  }
 
   return (
     <div className={classNames(classes.dayFlexContainer, {[classes.dayContainerGrey]: !isSameMonth(viewDate, day)})}>
@@ -84,21 +111,26 @@ const CalendarDay = (props) => {
         <span className={classNames({[classes.currentDay]: isToday})}>{getDate(day)}</span>
       </div>
       <div className={classes.dayContentFlex}>
-        { isAfter(day,today) ? null :
+        {
+          isAfter(day,today) ? null :
           <React.Fragment>
             <div className={classNames([classes.colorCard], [classes.colorWhite])}></div>
             <Button
               variant="contained"
-              aria-label="Add"
+              aria-label={ariaLabel}
               className={classes.button}
               disabled={isAfter(day,today)}
               component={Link}
               to={{
-                pathname: `${match.url}/add-new`,
-                state: {date: day}
+                pathname: linkToPathname,
+                state: linkState
               }}
             >
-              <AddIcon />
+              {
+                observationData ?
+                <React.Fragment>{observationDetails}</React.Fragment> :
+                <AddIcon />
+              }
             </Button>
           </React.Fragment>
         }
