@@ -18,7 +18,10 @@ import {
 } from "react-router-dom";
 import format from 'date-fns/format'
 
-import { observationTypesList, observationTypeOptions } from '../constants'
+import {
+  OptionTypes,
+  observationTypesList,
+  observationTypeOptions } from '../constants'
 
 const styles = theme => ({
   root: {
@@ -37,6 +40,34 @@ const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
 }
 
+const fullDescription = (descriptions) => {
+  return descriptions['shortDesc'] + " - " + descriptions['longDesc']
+}
+
+const SelectionItem = ({selectionType, params, pathname}) => {
+  const label = observationTypeOptions[selectionType]['label']
+  const descriptions = observationTypeOptions[selectionType]['optionsDesc']
+  let value = null
+  if(params[selectionType]) {
+    value = fullDescription(descriptions[params[selectionType]])
+  }
+  return (
+    <div>
+      <ListItem
+        button
+        component={Link}
+        to={{ pathname, search: `?edit=${selectionType}`}}
+      >
+        <ListItemText
+          primary={value ? label : 'Add ' + label}
+          secondary={value}
+        />
+      </ListItem>
+      <Divider />
+    </div>
+  )
+}
+
 const SelectionList = ({location, params, date}) => (
     <List component="nav">
       <ListItem
@@ -48,28 +79,14 @@ const SelectionList = ({location, params, date}) => (
         />
       </ListItem>
       <Divider />
-      {observationTypesList.map(type => {
-        const descriptions = observationTypeOptions[type]['optionsDesc']
-        let value = null
-        if(params[type]) {
-          value = descriptions[params[type]]['shortDesc'] + " - " + descriptions[params[type]]['longDesc']
-        }
-        return (
-          <div key={type}>
-            <ListItem
-              button
-              component={Link}
-              to={{ pathname: location.pathname, search: `?edit=${type}`}}
-            >
-              <ListItemText
-                primary={value ? capitalize(type) : 'Add ' + capitalize(type)}
-                secondary={value}
-              />
-            </ListItem>
-            <Divider />
-          </div>
-        )
-      })}
+      {observationTypesList.map(type => (
+        <SelectionItem
+          key={type}
+          selectionType={type}
+          params={params}
+          pathname={location.pathname}
+        />
+      ))}
     </List>
 )
 
@@ -173,10 +190,6 @@ class ObservationDetails extends Component {
     setObservationData(profileId, date, parameters).then(() => handleClose())
   }
 
-  capitalize = (s) => {
-    return s && s[0].toUpperCase() + s.slice(1);
-  }
-
   render() {
     const { classes, match, location, entryType } = this.props;
     let params = new URLSearchParams(location.search);
@@ -200,7 +213,7 @@ class ObservationDetails extends Component {
           <BackIcon />
         </IconButton>
       )
-      dialogTitle = this.capitalize(edit)
+      dialogTitle = capitalize(edit)
     } else {
       navigateButton = (
         <IconButton

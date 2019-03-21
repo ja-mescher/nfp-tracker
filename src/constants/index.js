@@ -151,31 +151,92 @@ export const ColorDescriptions = {
   }
 }
 
+export const CountOptionsList = [
+  1,2,3,4
+]
+
+export const CountDescriptions = {
+  1: {
+    shortDesc: 'x1',
+    longDesc: 'One Time'
+  },
+  2: {
+    shortDesc: 'x2',
+    longDesc: 'Two Times'
+  },
+  3: {
+    shortDesc: 'x3',
+    longDesc: 'Three Times'
+  },
+  4: {
+    shortDesc: 'AD',
+    longDesc: 'All Day'
+  },
+}
+
+export const OptionTypes = {
+  SELECT_ONE: 1,
+  SELECT_MANY: 2,
+  BOOLEAN: 3,
+  TEXT: 4,
+  STICKER_SELECT: 5,
+}
+
 export const observationTypeOptions = {
   'consistency': {
+    label: 'Consistency',
+    optionsType: OptionTypes.SELECT_ONE,
     optionsList: ConsistencyOptionsList,
     optionsDesc: ConsistencyDescriptions
   },
-  'flow': {
-    optionsList: FlowOptionsList,
-    optionsDesc: FlowDescriptions
-  },
   'color': {
+    label: 'Color',
+    optionsType: OptionTypes.SELECT_MANY,
     optionsList: ColorOptionsList,
     optionsDesc: ColorDescriptions
   },
+  'count': {
+    label: 'Occurrence',
+    optionsType: OptionTypes.SELECT_ONE,
+    optionsList: CountOptionsList,
+    optionsDesc: CountDescriptions
+  },
+  'flow': {
+    label: 'Flow',
+    optionsType: OptionTypes.SELECT_ONE,
+    optionsList: FlowOptionsList,
+    optionsDesc: FlowDescriptions
+  },
+  'sensation': {
+    label: 'Sensation',
+    optionsType: OptionTypes.BOOLEAN,
+  },
+  'intercourse': {
+    label: 'Intercourse',
+    optionsType: OptionTypes.BOOLEAN,
+  },
+  'peak': {
+    label: 'Peak',
+    optionsType: OptionTypes.BOOLEAN,
+  },
+  'notes': {
+    label: 'Notes',
+    optionsType: OptionTypes.TEXT,
+  }
 }
 
 export const observationTypesList = [
   'consistency',
   'color',
-  'flow'
+  'flow',
+  'count',
 ]
 
 // date - calendar
 // flow - select 1
 // consistency - select 1
 // color - select many
+
 // sensation - boolean
 // observation count - select 1
 // intercourse - boolean

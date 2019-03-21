@@ -38,11 +38,12 @@ class SignIn extends Component {
   }
 
   render() {
-    const { from } = this.props.location.state || { from: { pathname: "/profiles" } };
-    const { classes, signIn, isAuthenticated } = this.props;
+    const { classes, signIn, profileLoaded } = this.props;
     const { email, password } = this.state;
+    const { from } = this.props.location.state || { from: { pathname: `/${profileLoaded}/observations` } };
 
-    if(isAuthenticated) {
+
+    if(profileLoaded) {
       return <Redirect to={from} />;
     }
 

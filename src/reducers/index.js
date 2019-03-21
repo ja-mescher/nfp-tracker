@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux'
 import {
   FETCH_USER,
-  FETCH_USER_PROFILES,
+  FETCH_USER_DETAILS,
+  FETCH_USER_PROFILE,
   CHANGE_OBSERVATION,
   ADD_OBSERVATION,
   MODIFY_OBSERVATION,
@@ -18,9 +19,18 @@ const user = (state = null, action) => {
   }
 }
 
-const userProfiles = (state = [], action) => {
+const userDetails = (state = null, action) => {
   switch(action.type) {
-    case FETCH_USER_PROFILES:
+    case FETCH_USER_DETAILS:
+      return action.payload
+    default:
+      return state
+  }
+}
+
+const userProfile = (state = null, action) => {
+  switch(action.type) {
+    case FETCH_USER_PROFILE:
       return action.payload
     default:
       return state
@@ -62,7 +72,8 @@ const viewDate = (state = new Date(), action) => {
 
 export default combineReducers({
   user,
-  userProfiles,
+  userDetails,
+  userProfile,
   observations,
   viewDate
 })

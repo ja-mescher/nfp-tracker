@@ -74,6 +74,9 @@ const styles = theme => ({
     bottom: '5%',
     textTransform: 'capitalize',
   },
+  buttonBlock: {
+    display: 'block',
+  }
 })
 
 const CalendarDay = (props) => {
@@ -128,7 +131,7 @@ const CalendarDay = (props) => {
             >
               {
                 observationData ?
-                <React.Fragment>{observationDetails}</React.Fragment> :
+                <div className={classes.buttonBlock}>{observationDetails}</div> :
                 <AddIcon />
               }
             </Button>

@@ -31,11 +31,10 @@ class App extends Component {
             <Switch>
               <Route exact path="/(index.html)?" component={SignIn} />
               <Route exact path="/register" component={RegisterUser} />
-              <PrivateRoute exact path="/profiles" component={Profiles} />
-              <PrivateRoute path="/profiles/:profileId/observations" component={Observations} />
+              <PrivateRoute path="/:profileId/observations" component={Observations} />
               <Route component={NoMatch} />
             </Switch>
-            <Route path="/profiles/:profileId/observations" component={FullScreenDialog} />
+            <Route path="/:profileId/observations" component={FullScreenDialog} />
           </div>
         </BrowserRouter>
       </div>

@@ -1,7 +1,8 @@
 import { authRef, databaseRef } from '../config/firebase'
 import {
   FETCH_USER,
-  FETCH_USER_PROFILES,
+  FETCH_USER_DETAILS,
+  FETCH_USER_PROFILE,
   CHANGE_OBSERVATION,
   SET_VIEW_DATE
 } from "./types";
@@ -20,7 +21,7 @@ export const fetchUser = () => dispatch => {
   authRef
     .onAuthStateChanged(user => {
       if (user) {
-        dispatch(fetchUserProfiles(user))
+        dispatch(fetchUserDetails(user))
         dispatch({
           type: FETCH_USER,
           payload: user
@@ -34,10 +35,36 @@ export const fetchUser = () => dispatch => {
     });
 };
 
-export const fetchUserProfiles = (user) => dispatch => {
-  firebaseUnsubscribes[FETCH_USER_PROFILES] = databaseRef
+export const fetchUserDetails= (user) => dispatch => {
+  databaseRef
+    .collection("users")
+    .doc(user.uid)
+    .get()
+    .then((doc) => {
+      const userDetails = doc.data()
+      // var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
+      // console.log(doc.empty)
+      console.log(userDetails)
+      // console.log(source, " data: ", doc.docs.length);
+      if(userDetails.profilePrimary.length !== 0)
+      {
+        dispatch(fetchUserProfile(userDetails.profilePrimary))
+      }
+      else if(userDetails.profileSecondary.length !== 0)
+      {
+        dispatch(fetchUserProfile(userDetails.profileSecondary))
+      }
+      dispatch({
+        type: FETCH_USER_DETAILS,
+        payload: userDetails
+      });
+    });
+};
+
+export const fetchUserProfile = (profile) => dispatch => {
+  databaseRef
     .collection("profiles")
-    .where("users", "array-contains", user.uid)
+    .doc(profile)
     .get()
     .then((doc) => {
       // var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
@@ -45,8 +72,8 @@ export const fetchUserProfiles = (user) => dispatch => {
       console.log(doc)
       // console.log(source, " data: ", doc.docs.length);
       dispatch({
-        type: FETCH_USER_PROFILES,
-        payload: doc.docs.map(doc => Object.assign({documentId: doc.id}, doc.data()))
+        type: FETCH_USER_PROFILE,
+        payload: Object.assign({profileId: doc.id}, doc.data())
       });
     });
 };
