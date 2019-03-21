@@ -5,7 +5,6 @@ import rootReducer from './reducers'
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import green from '@material-ui/core/colors/green';
 import App from './App';
 
 import './index.css';
@@ -26,7 +25,18 @@ const store = createStore(
 
 const theme = createMuiTheme({
   palette: {
-    primary: green,
+    primary: {
+      light: '#757ce8',
+      main: '#B5BA72',
+      dark: '#002884',
+      contrastText: '#535534',
+    },
+    secondary: {
+      light: '#ff7961',
+      main: '#f44336',
+      dark: '#ba000d',
+      contrastText: '#000',
+    },
   },
 });
 

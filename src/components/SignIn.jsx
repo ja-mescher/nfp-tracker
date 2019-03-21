@@ -38,18 +38,19 @@ class SignIn extends Component {
   }
 
   render() {
-    const { from } = this.props.location.state || { from: { pathname: "/" } };
-    const { classes, signIn, isAuthenticated } = this.props;
+    const { classes, signIn, profileLoaded } = this.props;
     const { email, password } = this.state;
+    const { from } = this.props.location.state || { from: { pathname: `/${profileLoaded}/observations` } };
 
-    if(isAuthenticated) {
+
+    if(profileLoaded) {
       return <Redirect to={from} />;
     }
 
     return (
       <div>
         <Paper className={classes.root} elevation={2}>
-          <Typography variant="headline" component="h3">
+          <Typography variant="h5">
             Sign In
           </Typography>
           <TextField

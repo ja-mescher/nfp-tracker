@@ -1,24 +1,19 @@
 import React, { Component } from 'react';
-import RegisterUser from './containers/RegisterUser'
-import SignIn from './containers/SignIn'
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { fetchUser } from "./actions";
 import PrivateRoute from "./containers/PrivateRoute"
-// import ObservationDetails from './containers/ObservationDetails'
+
+import RegisterUser from './containers/RegisterUser'
+import SignIn from './containers/SignIn'
+import FullScreenDialog from './components/FullScreenDialog'
+import Profiles from './containers/Profiles'
+import Observations from './components/Observations'
 
 const NoMatch = ({ location }) => (
   <div>
     <h3>
       404: No match for <code>{location.pathname}</code>
-    </h3>
-  </div>
-);
-
-const AppContent = ({ location }) => (
-  <div>
-    <h3>
-      App Content HERE
     </h3>
   </div>
 );
@@ -30,16 +25,19 @@ class App extends Component {
 
   render() {
     return (
-      <BrowserRouter>
-        <div className="App">
-          <Switch>
-            <PrivateRoute exact path="/" component={AppContent} />
-            <Route path="/signin" component={SignIn} />
-            <Route path="/register" component={RegisterUser} />
-            <Route component={NoMatch} />
-          </Switch>
-        </div>
-      </BrowserRouter>
+      <div>
+        <BrowserRouter>
+          <div className="App">
+            <Switch>
+              <Route exact path="/(index.html)?" component={SignIn} />
+              <Route exact path="/register" component={RegisterUser} />
+              <PrivateRoute path="/:profileId/observations" component={Observations} />
+              <Route component={NoMatch} />
+            </Switch>
+            <Route path="/:profileId/observations" component={FullScreenDialog} />
+          </div>
+        </BrowserRouter>
+      </div>
     );
   }
 }

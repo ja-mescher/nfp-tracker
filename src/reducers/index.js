@@ -1,10 +1,13 @@
 import { combineReducers } from 'redux'
 import {
   FETCH_USER,
-  OPEN_OBSERVATION,
+  FETCH_USER_DETAILS,
+  FETCH_USER_PROFILE,
+  CHANGE_OBSERVATION,
   ADD_OBSERVATION,
   MODIFY_OBSERVATION,
-  DELETE_OBSERVATION
+  DELETE_OBSERVATION,
+  SET_VIEW_DATE
 } from '../actions/types'
 
 const user = (state = null, action) => {
@@ -16,29 +19,52 @@ const user = (state = null, action) => {
   }
 }
 
-const observations = (state = [], action) => {
+const userDetails = (state = null, action) => {
   switch(action.type) {
-    case ADD_OBSERVATION:
-      return state
-    case MODIFY_OBSERVATION:
-     return state
-    case DELETE_OBSERVATION:
-      return state
+    case FETCH_USER_DETAILS:
+      return action.payload
     default:
       return state
   }
 }
 
-const openObservationId = (state = null, action) => {
+const userProfile = (state = null, action) => {
   switch(action.type) {
-    case OPEN_OBSERVATION:
-      return action.observationId
-    case ADD_OBSERVATION:
-      return null
-    case MODIFY_OBSERVATION:
-     return null
-    case DELETE_OBSERVATION:
-      return null
+    case FETCH_USER_PROFILE:
+      return action.payload
+    default:
+      return state
+  }
+}
+
+const observations = (state = {}, action) => {
+  switch(action.type) {
+    case CHANGE_OBSERVATION:
+      switch(action.changeType) {
+        case ADD_OBSERVATION:
+        case MODIFY_OBSERVATION:
+          return {
+            ...state,
+            [action.payload.documentId]: {
+              hasPendingWrites: action.payload.hasPendingWrites,
+              data: action.payload.data
+            }
+          }
+        case DELETE_OBSERVATION:
+          let {[action.payload.documentId]: deletedObservation, ...newState} = state
+          return newState
+        default:
+          return state
+      }
+    default:
+      return state
+  }
+}
+
+const viewDate = (state = new Date(), action) => {
+  switch(action.type) {
+    case SET_VIEW_DATE:
+      return action.viewDate
     default:
       return state
   }
@@ -46,6 +72,8 @@ const openObservationId = (state = null, action) => {
 
 export default combineReducers({
   user,
+  userDetails,
+  userProfile,
   observations,
-  openObservationId
+  viewDate
 })

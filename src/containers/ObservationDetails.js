@@ -1,16 +1,17 @@
 import { connect } from 'react-redux'
 import ObservationDetails from '../components/ObservationDetails'
-import { openObservationId } from '../actions'
+import { withRouter } from "react-router";
+import { setObservationData } from '../actions'
 
 const mapStateToProps = state => ({
-  isOpen: (state.openObservationId !== null)
+
 })
 
 const mapDispatchToProps = dispatch => ({
-  cancel: () => dispatch(openObservationId(null))
+  setObservationData: (profileId, date, dataFieldsObject) => dispatch(setObservationData(profileId, date, dataFieldsObject)),
 })
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(ObservationDetails)
+)(ObservationDetails))

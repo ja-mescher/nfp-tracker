@@ -3,7 +3,7 @@ import SignIn from '../components/SignIn'
 import { signInWithEmailAndPassword } from '../actions'
 
 const mapStateToProps = state => ({
-  isAuthenticated: (state.user !== null)
+  profileLoaded: state.userProfile ? state.userProfile.profileId : null
 })
 
 const mapDispatchToProps = dispatch => ({

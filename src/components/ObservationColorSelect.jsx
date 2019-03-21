@@ -10,8 +10,6 @@ import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Chip from '@material-ui/core/Chip';
 
-import { ColorOptionsList, ColorDescriptions } from '../constants'
-
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -52,7 +50,7 @@ class MultipleSelect extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, optionList, optionDescriptions } = this.props;
 
     return (
       <div className={classes.root}>
@@ -72,8 +70,8 @@ class MultipleSelect extends React.Component {
             )}
             MenuProps={MenuProps}
           >
-            {ColorOptionsList.map(option => {
-              const label = ColorDescriptions[option]['shortDesc'] + ' - ' + ColorDescriptions[option]['longDesc']
+            {optionList.map(option => {
+              const label = optionList[option]['shortDesc'] + ' - ' + optionList[option]['longDesc']
               return (
                 <MenuItem key={option} value={label}>
                   <Checkbox checked={this.state.option.indexOf(label) > -1} />
