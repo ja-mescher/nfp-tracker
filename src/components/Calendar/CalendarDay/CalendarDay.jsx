@@ -10,7 +10,7 @@ import isAfter from 'date-fns/isAfter'
 import isSameMonth from 'date-fns/isSameMonth'
 import classNames from 'classnames'
 
-import { observationTypesList, observationTypeOptions } from '../constants'
+import { observationTypesList, observationTypeOptions } from '../../../constants'
 
 const styles = theme => ({
   dayFlexContainer: {

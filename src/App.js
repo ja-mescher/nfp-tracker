@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { fetchUser } from "./actions";
-import PrivateRoute from "./containers/PrivateRoute"
+import PrivateRoute from "./components/auth/PrivateRoute"
 
-import RegisterUser from './containers/RegisterUser'
-import SignIn from './containers/SignIn'
+import RegisterUser from './components/auth/RegisterUser'
+import SignIn from './components/auth/SignIn'
+import ResetPassword from './components/auth/ResetPassword'
 import FullScreenDialog from './components/FullScreenDialog'
-import Profiles from './containers/Profiles'
-import Observations from './components/Observations'
+import Calendar from './components/Calendar'
 
 const NoMatch = ({ location }) => (
   <div>
@@ -25,19 +25,18 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        <BrowserRouter>
-          <div className="App">
-            <Switch>
-              <Route exact path="/(index.html)?" component={SignIn} />
-              <Route exact path="/register" component={RegisterUser} />
-              <PrivateRoute path="/:profileId/observations" component={Observations} />
-              <Route component={NoMatch} />
-            </Switch>
-            <Route path="/:profileId/observations" component={FullScreenDialog} />
-          </div>
-        </BrowserRouter>
-      </div>
+      <BrowserRouter>
+        <div className="App">
+          <Switch>
+            <Route exact path="/(index.html)?" component={SignIn} />
+            <Route exact path="/register" component={RegisterUser} />
+            <Route exact path="/reset-password" component={ResetPassword} />
+            <PrivateRoute path="/:profileId/observations" component={Calendar} />
+            <Route component={NoMatch} />
+          </Switch>
+          <Route path="/:profileId/observations" component={FullScreenDialog} />
+        </div>
+      </BrowserRouter>
     );
   }
 }

@@ -2,19 +2,23 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import TodayIcon from '@material-ui/icons/Today';
 import NavigateBeforeIcon from '@material-ui/icons/ArrowBackIos';
 import NavigateNextIcon from '@material-ui/icons/ArrowForwardIos';
 import subMonths from 'date-fns/subMonths'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import CalendarDay from '../containers/CalendarDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import isAfter from 'date-fns/isAfter'
 import isEqual from 'date-fns/isEqual'
 import getDayOfYear from 'date-fns/getDayOfYear'
+
+import CalendarDay from './CalendarDay'
 
 const styles = theme => ({
   root: {
@@ -63,8 +67,7 @@ const styles = theme => ({
     flexGrow: 1,
   },
   menuButton: {
-    marginLeft: -12,
-    marginRight: 12,
+
   },
 });
 
@@ -146,23 +149,28 @@ class Calendar extends Component {
 
     return (
       <div className={classes.root}>
+        <CssBaseline />
         <AppBar position="static">
           <Toolbar>
-            <IconButton
-              className={classes.menuButton}
-              color="inherit"
-              aria-label="Menu"
-              onClick={()=>setViewDate(subMonths(viewDate,1))}
-            >
-              <NavigateBeforeIcon />
+            <IconButton color="inherit" aria-label="Open drawer">
+              <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" className={classes.grow}>
               {monthTitle}
             </Typography>
+            <IconButton color="inherit" aria-label="Display today">
+              <TodayIcon />
+            </IconButton>
             <IconButton
-              className={classes.menuButton}
               color="inherit"
-              aria-label="Menu"
+              aria-label="Display previous"
+              onClick={()=>setViewDate(subMonths(viewDate,1))}
+            >
+              <NavigateBeforeIcon />
+            </IconButton>
+            <IconButton
+              color="inherit"
+              aria-label="Display next"
               disabled={isAfter(startOfMonth(addMonths(viewDate,1)),today)}
               onClick={()=>setViewDate(addMonths(viewDate,1))}
             >

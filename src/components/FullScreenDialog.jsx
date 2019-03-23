@@ -1,7 +1,7 @@
 import React from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
-import ObservationDetails from '../containers/ObservationDetails'
+import ObservationDetails from './ObservationDetails'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />;

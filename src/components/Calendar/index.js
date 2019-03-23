@@ -1,11 +1,14 @@
 import { connect } from 'react-redux'
-import Calendar from '../components/Calendar'
-import { setViewDate } from '../actions'
+import Calendar from './Calendar'
+import { withRouter } from 'react-router-dom'
+import { compose } from 'recompose';
+
+import { setViewDate, fetchObservations } from '../../actions'
+
 import setDate from 'date-fns/setDate'
 import lastDayOfMonth from 'date-fns/lastDayOfMonth'
 import format from 'date-fns/format'
 import eachWeekOfInterval from 'date-fns/eachWeekOfInterval'
-import { fetchObservations } from '../actions'
 
 const mapStateToProps = state => {
 
@@ -30,7 +33,10 @@ const mapDispatchToProps = dispatch => ({
   fetchObservations: (profileId, startDate, endDate) => dispatch(fetchObservations(profileId, startDate, endDate))
 })
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+export default compose(
+  withRouter,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Calendar)

@@ -19,9 +19,8 @@ import {
 import format from 'date-fns/format'
 
 import {
-  OptionTypes,
   observationTypesList,
-  observationTypeOptions } from '../constants'
+  observationTypeOptions } from '../../constants'
 
 const styles = theme => ({
   root: {
@@ -99,7 +98,7 @@ class ParameterOptions extends Component {
   }
 
   handleSelect = (value) => {
-    console.warn(this.props.paramType, value)
+    // console.warn(this.props.paramType, value)
     this.props.handleSelect(this.props.paramType, value)
     this.setState({redirect: true})
   }
@@ -175,7 +174,7 @@ class ObservationDetails extends Component {
   clearParamSelection = (paramName) => {
     this.setState((state, props) => {
       let { [paramName]: omit, ...res } = state.parameters
-      console.log(paramName, res)
+      // console.log(paramName, res)
       return {parameters: res}
     });
   }
@@ -195,11 +194,11 @@ class ObservationDetails extends Component {
     let params = new URLSearchParams(location.search);
     const edit = params.get("edit")
     const { date } = this.state;
-    console.warn(match, location)
+    // console.warn(match, location)
     if(!date) {
       return <Redirect to={match.url} />
     }
-    console.warn(this.state)
+    // console.warn(this.state)
 
     let navigateButton = null
     let dialogTitle = null

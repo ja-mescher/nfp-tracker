@@ -44,7 +44,7 @@ export const fetchUserDetails= (user) => dispatch => {
       const userDetails = doc.data()
       // var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
       // console.log(doc.empty)
-      console.log(userDetails)
+      // console.log(userDetails)
       // console.log(source, " data: ", doc.docs.length);
       if(userDetails.profilePrimary.length !== 0)
       {
@@ -79,43 +79,24 @@ export const fetchUserProfile = (profile) => dispatch => {
 };
 
 export const createUserWithEmailAndPassword = (email, password) => dispatch => {
-  authRef
+  return authRef
     .createUserWithEmailAndPassword(email, password)
-    .catch((error) => {
-      console.error(error);
-    });
 }
 
 export const signInWithEmailAndPassword = (email, password) => dispatch => {
-  console.log(email, password)
-  authRef
+  return authRef
     .signInWithEmailAndPassword(email, password)
-    .catch((error) => {
-      console.error(error);
-    });
+}
+
+export const sendPasswordResetEmail = (email) => dispatch => {
+  return authRef
+    .sendPasswordResetEmail(email)
 }
 
 export const signOut = () => dispatch => {
-  authRef
+  return authRef
     .signOut()
-    .then(() => {
-      // Sign-out successful.
-    })
-    .catch(error => {
-      console.error(error);
-    });
 };
-
-export const resetPassword = (email) => dispatch => {
-  authRef
-    .sendPasswordResetEmail(email)
-    .then(() => {
-      // Email sent.
-    })
-    .catch((error) => {
-      console.error(error)
-    });
-}
 
 export const setViewDate = (viewDate) => ({
   type: SET_VIEW_DATE,

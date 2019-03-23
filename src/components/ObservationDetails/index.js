@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
-import ObservationDetails from '../components/ObservationDetails'
+import ObservationDetails from './ObservationDetails'
 import { withRouter } from "react-router";
-import { setObservationData } from '../actions'
+import { setObservationData } from '../../actions'
 
 const mapStateToProps = state => ({
 

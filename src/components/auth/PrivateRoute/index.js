@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import PrivateRoute from '../components/PrivateRoute'
+import PrivateRoute from './PrivateRoute'
 
 const mapStateToProps = state => ({
   isAuthenticated: (state.user !== null)
