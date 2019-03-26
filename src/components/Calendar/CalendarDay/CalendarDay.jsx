@@ -40,7 +40,8 @@ const styles = theme => ({
     minWidth: '20px',
     maxWidth: '20px',
     textAlign: 'center',
-    backgroundColor:'lightgrey',
+    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.primary.light,
   },
   dayContentFlex: {
     flex: 1,

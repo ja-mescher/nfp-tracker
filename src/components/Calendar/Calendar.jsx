@@ -6,7 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import TodayIcon from '@material-ui/icons/Today';
 import NavigateBeforeIcon from '@material-ui/icons/ArrowBackIos';
 import NavigateNextIcon from '@material-ui/icons/ArrowForwardIos';
@@ -17,6 +17,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import isAfter from 'date-fns/isAfter'
 import isEqual from 'date-fns/isEqual'
 import getDayOfYear from 'date-fns/getDayOfYear'
+import { Link } from 'react-router-dom'
 
 import CalendarDay from './CalendarDay'
 
@@ -152,13 +153,22 @@ class Calendar extends Component {
         <CssBaseline />
         <AppBar position="static">
           <Toolbar>
-            <IconButton color="inherit" aria-label="Open drawer">
-              <MenuIcon />
+            <IconButton
+              color="inherit"
+              aria-label="Open drawer"
+              component={Link}
+              to="/account"
+            >
+              <AccountCircle />
             </IconButton>
             <Typography variant="h6" color="inherit" className={classes.grow}>
               {monthTitle}
             </Typography>
-            <IconButton color="inherit" aria-label="Display today">
+            <IconButton
+              color="inherit"
+              aria-label="Display today"
+              onClick={()=>setViewDate(new Date())}
+            >
               <TodayIcon />
             </IconButton>
             <IconButton

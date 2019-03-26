@@ -7,6 +7,7 @@ import PrivateRoute from "./components/auth/PrivateRoute"
 import RegisterUser from './components/auth/RegisterUser'
 import SignIn from './components/auth/SignIn'
 import ResetPassword from './components/auth/ResetPassword'
+import Account from './components/auth/Account'
 import FullScreenDialog from './components/FullScreenDialog'
 import Calendar from './components/Calendar'
 
@@ -31,10 +32,11 @@ class App extends Component {
             <Route exact path="/(index.html)?" component={SignIn} />
             <Route exact path="/register" component={RegisterUser} />
             <Route exact path="/reset-password" component={ResetPassword} />
+            <PrivateRoute exact path="/account" component={Account} />
             <PrivateRoute path="/:profileId/observations" component={Calendar} />
             <Route component={NoMatch} />
           </Switch>
-          <Route path="/:profileId/observations" component={FullScreenDialog} />
+          <PrivateRoute path="/:profileId/observations" component={FullScreenDialog} />
         </div>
       </BrowserRouter>
     );

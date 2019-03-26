@@ -96,7 +96,9 @@ export const sendPasswordResetEmail = (email) => dispatch => {
 export const signOut = () => dispatch => {
   return authRef
     .signOut()
-};
+    .then(()=>console.log('sign out success'))
+    .catch((err)=>console.error('sign out erro', err))
+}
 
 export const setViewDate = (viewDate) => ({
   type: SET_VIEW_DATE,
