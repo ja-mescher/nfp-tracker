@@ -12,14 +12,14 @@ import NavigateBeforeIcon from '@material-ui/icons/ArrowBackIos';
 import NavigateNextIcon from '@material-ui/icons/ArrowForwardIos';
 import subMonths from 'date-fns/subMonths'
 import addMonths from 'date-fns/addMonths'
-import addDays from 'date-fns/addDays'
 import startOfMonth from 'date-fns/startOfMonth'
 import isAfter from 'date-fns/isAfter'
 import isEqual from 'date-fns/isEqual'
 import getDayOfYear from 'date-fns/getDayOfYear'
 import { Link } from 'react-router-dom'
 
-import CalendarDay from './CalendarDay'
+import WeekLabels from './WeekLabels'
+import CalendarWeek from './CalendarWeek'
 
 const styles = theme => ({
   root: {
@@ -29,91 +29,10 @@ const styles = theme => ({
   	display: 'flex',
   	flexDirection: 'column',
   },
-  weekFlexContainer: {
-		flex: 1,
-    padding: '0px',
-  },
-  weekFlexContent: {
-    height: '100%',
-  	display: 'flex',
-  },
-  weekLabelFlexContainer: {
-		height: '20px',
-    padding: '0px',
-  },
-  dayFlexContainer: {
-    display: 'flex',
-		flexDirection: 'column',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    boxSizing: 'border-box',
-    borderStyle: 'solid hidden hidden solid',
-    borderWidth: '1px',
-    borderColor: 'lightgrey',
-    textAlign: 'center',
-    minWidth: 0,
-    padding: '0px'
-  },
-  paper: {
-    padding: theme.spacing.unit,
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: '100%',
-    width: '100%',
-  	display: 'flex',
-    boxSizing: 'border-box'
-  },
-  grow: {
+  title: {
     flexGrow: 1,
   },
-  menuButton: {
-
-  },
 });
-
-const CalendarWeek = (props) => {
-  const { classes, startDate } = props;
-  const daysOfWeek = [0,1,2,3,4,5,6].map(i => addDays(startDate, i))
-  return (
-    <div className={classes.weekFlexContainer}>
-      <div className={classes.weekFlexContent}>
-        {daysOfWeek.map(day => <CalendarDay key={getDayOfYear(day)} day={day}/>)}
-      </div>
-    </div>
-  )
-}
-
-const WeekLabels = (props) => {
-  const { classes, labels } = props;
-  return (
-    <div className={classes.weekLabelFlexContainer}>
-      <div className={classes.weekFlexContent}>
-        {
-          labels.map(label => (
-            <div key={label} className={classes.dayFlexContainer}>
-              <Typography variant="body2" noWrap>{label}</Typography>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  )
-}
-
-CalendarWeek.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-const weekdayLabels = [
-  'Sun',
-  'Mon',
-  'Tues',
-  'Wed',
-  'Thur',
-  'Fri',
-  'Sat'
-]
 
 class Calendar extends Component {
   constructor(props) {
@@ -161,7 +80,7 @@ class Calendar extends Component {
             >
               <AccountCircle />
             </IconButton>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
+            <Typography variant="h6" color="inherit" className={classes.title}>
               {monthTitle}
             </Typography>
             <IconButton
@@ -188,13 +107,12 @@ class Calendar extends Component {
             </IconButton>
           </Toolbar>
         </AppBar>
-        <WeekLabels classes={classes} labels={weekdayLabels}/>
+        <WeekLabels />
         {
           startOfWeeks.map((startDate, index) => {
             return (
               <CalendarWeek
-                key={getDayOfYear(startDate)}
-                classes={classes}
+                key={getDayOfYear(startDate) + '-' + index}
                 startDate={startDate}
               />
             )

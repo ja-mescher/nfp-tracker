@@ -95,9 +95,7 @@ const CalendarDay = (props) => {
     observationTypesList.forEach(obsType => {
       if(data.hasOwnProperty(obsType)) {
         observationDetails.push(
-          <div key={obsType}>
-            {observationTypeOptions[obsType]['optionsDesc'][data[obsType]]['shortDesc']}
-          </div>
+          observationTypeOptions[obsType]['optionsDesc'][data[obsType]]['shortDesc']
         )
         filteredData[obsType] = data[obsType]
       }
