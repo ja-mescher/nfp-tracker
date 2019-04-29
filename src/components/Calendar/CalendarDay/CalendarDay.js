@@ -80,10 +80,8 @@ const styles = theme => ({
   }
 })
 
-const CalendarDay = (props) => {
-  const { classes, location, day, viewDate, observationData } = props;
+const CalendarDay = ({ classes, location, day, viewDate, observationData }) => {
   const today = new Date();
-  const isToday = isSameDay(day,today)
 
   const observationDetails = []
   var ariaLabel = "Add"
@@ -110,7 +108,7 @@ const CalendarDay = (props) => {
   return (
     <div className={classNames(classes.dayFlexContainer, {[classes.dayContainerGrey]: !isSameMonth(viewDate, day)})}>
       <div className={classes.dayNumberFlex}>
-        <span className={classNames({[classes.currentDay]: isToday})}>{getDate(day)}</span>
+        <span className={classNames({[classes.currentDay]: isSameDay(day,today)})}>{getDate(day)}</span>
       </div>
       <div className={classes.dayContentFlex}>
         {

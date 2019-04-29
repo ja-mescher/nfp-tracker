@@ -1,4 +1,4 @@
-export const FlowOptions = {
+export const flowOptions = {
   NONE: 0,
   HEAVY: 4,
   MODERATE: 3,
@@ -7,38 +7,71 @@ export const FlowOptions = {
   BROWN: 5
 }
 
-export const FlowOptionsList = [
-  FlowOptions.HEAVY,
-  FlowOptions.MODERATE,
-  FlowOptions.LIGHT,
-  FlowOptions.VERY_LIGHT,
-  FlowOptions.BROWN
+export const flowOptionsList = [
+  flowOptions.HEAVY,
+  flowOptions.MODERATE,
+  flowOptions.LIGHT,
+  flowOptions.VERY_LIGHT,
+  flowOptions.BROWN
 ]
 
-export const FlowDescriptions = {
-  [FlowOptions.HEAVY]: {
+export const flowDescriptions = {
+  [flowOptions.HEAVY]: {
     shortDesc: 'H',
     longDesc: 'Heavy'
   },
-  [FlowOptions.MODERATE]: {
+  [flowOptions.MODERATE]: {
     shortDesc: 'M',
     longDesc: 'Moderate'
   },
-  [FlowOptions.LIGHT]: {
+  [flowOptions.LIGHT]: {
     shortDesc: 'L',
     longDesc: 'Light'
   },
-  [FlowOptions.VERY_LIGHT]: {
+  [flowOptions.VERY_LIGHT]: {
     shortDesc: 'VL',
     longDesc: 'Very Light'
   },
-  [FlowOptions.BROWN]: {
+  [flowOptions.BROWN]: {
     shortDesc: 'B',
     longDesc: 'Brown'
   }
 }
 
-export const ConsistencyOptions = {
+export const otherOptions = {
+  NONE: 0,
+  LUBRICATIVE: 1,
+  INTERCOURSE: 2,
+  PEAK: 3,
+}
+
+export const otherOptionsList = [
+  otherOptions.LUBRICATIVE,
+  otherOptions.INTERCOURSE,
+  otherOptions.PEAK,
+  otherOptions.NEW_CYCLE,
+]
+
+export const otherDescriptions = {
+  [otherOptions.LUBRICATIVE]: {
+    shortDesc: 'L',
+    longDesc: 'Lubricative'
+  },
+  [otherOptions.INTERCOURSE]: {
+    shortDesc: 'I',
+    longDesc: 'Intercourse'
+  },
+  [otherOptions.PEAK]: {
+    shortDesc: 'P',
+    longDesc: 'Peak'
+  },
+  [otherOptions.NEW_CYCLE]: {
+    shortDesc: 'N',
+    longDesc: 'New Cycle'
+  },
+}
+
+export const consistencyOptions = {
   // N_A: 0,
   DRY: 1,
   DAMP: 2,
@@ -52,60 +85,60 @@ export const ConsistencyOptions = {
   // WET: 10
 }
 
-export const ConsistencyOptionsList = [
-  ConsistencyOptions.DRY,
-  ConsistencyOptions.STICKY,
-  ConsistencyOptions.TACKY,
-  ConsistencyOptions.STRETCHY,
-  ConsistencyOptions.DAMP,
-  ConsistencyOptions.WET,
-  ConsistencyOptions.SHINY,
+export const consistencyOptionsList = [
+  consistencyOptions.DRY,
+  consistencyOptions.STICKY,
+  consistencyOptions.TACKY,
+  consistencyOptions.STRETCHY,
+  consistencyOptions.DAMP,
+  consistencyOptions.WET,
+  consistencyOptions.SHINY,
 ]
 
-export const ConsistencyDescriptions = {
-  [ConsistencyOptions.DRY]: {
+export const consistencyDescriptions = {
+  [consistencyOptions.DRY]: {
     shortDesc: '0',
     longDesc: 'Dry'
   },
-  [ConsistencyOptions.DAMP]: {
+  [consistencyOptions.DAMP]: {
     shortDesc: '2',
     longDesc: 'Damp'
   },
-  [ConsistencyOptions.WET]: {
+  [consistencyOptions.WET]: {
     shortDesc: '2W',
     longDesc: 'Wet'
   },
-  [ConsistencyOptions.SHINY]: {
+  [consistencyOptions.SHINY]: {
     shortDesc: '4',
     longDesc: 'Shiny'
   },
-  [ConsistencyOptions.STICKY]: {
+  [consistencyOptions.STICKY]: {
     shortDesc: '6',
     longDesc: 'Sticky'
   },
-  [ConsistencyOptions.TACKY]: {
+  [consistencyOptions.TACKY]: {
     shortDesc: '8',
     longDesc: 'Tacky'
   },
-  [ConsistencyOptions.STRETCHY]: {
+  [consistencyOptions.STRETCHY]: {
     shortDesc: '10',
     longDesc: 'Stretchy'
   },
-  [ConsistencyOptions.DAMP]: {
+  [consistencyOptions.DAMP]: {
     shortDesc: '10DL',
     longDesc: 'Damp'
   },
-  [ConsistencyOptions.SHINY]: {
+  [consistencyOptions.SHINY]: {
     shortDesc: '10SL',
     longDesc: 'Shiny'
   },
-  [ConsistencyOptions.WET]: {
+  [consistencyOptions.WET]: {
     shortDesc: '10WL',
     longDesc: 'Wet'
   }
 }
 
-export const ColorOptions = {
+export const colorOptions = {
   N_A: 0,
   BROWN: 1,
   CLOUDY: 2,
@@ -115,47 +148,47 @@ export const ColorOptions = {
   YELLOW: 6
 }
 
-export const ColorOptionsList = [
-  ColorOptions.BROWN,
-  ColorOptions.CLOUDY,
-  ColorOptions.GUMMY,
-  ColorOptions.CLEAR,
-  ColorOptions.PASTY,
-  ColorOptions.YELLOW
+export const colorOptionsList = [
+  colorOptions.BROWN,
+  colorOptions.CLOUDY,
+  colorOptions.GUMMY,
+  colorOptions.CLEAR,
+  colorOptions.PASTY,
+  colorOptions.YELLOW
 ]
 
-export const ColorDescriptions = {
-  [ColorOptions.BROWN]: {
+export const colorDescriptions = {
+  [colorOptions.BROWN]: {
     shortDesc: 'B',
     longDesc: 'Brown'
   },
-  [ColorOptions.CLOUDY]: {
+  [colorOptions.CLOUDY]: {
     shortDesc: 'C',
     longDesc: 'Cloudy'
   },
-  [ColorOptions.GUMMY]: {
+  [colorOptions.GUMMY]: {
     shortDesc: 'G',
     longDesc: 'Gummy'
   },
-  [ColorOptions.CLEAR]: {
+  [colorOptions.CLEAR]: {
     shortDesc: 'K',
     longDesc: 'Clear'
   },
-  [ColorOptions.PASTY]: {
+  [colorOptions.PASTY]: {
     shortDesc: 'P',
     longDesc: 'Pasty'
   },
-  [ColorOptions.YELLOW]: {
+  [colorOptions.YELLOW]: {
     shortDesc: 'Y',
     longDesc: 'Yellow'
   }
 }
 
-export const CountOptionsList = [
+export const countOptionsList = [
   1,2,3,4
 ]
 
-export const CountDescriptions = {
+export const countDescriptions = {
   1: {
     shortDesc: 'x1',
     longDesc: 'One Time'
@@ -174,7 +207,7 @@ export const CountDescriptions = {
   },
 }
 
-export const OptionTypes = {
+export const optionTypes = {
   SELECT_ONE: 1,
   SELECT_MANY: 2,
   BOOLEAN: 3,
@@ -185,43 +218,37 @@ export const OptionTypes = {
 export const observationTypeOptions = {
   'consistency': {
     label: 'Consistency',
-    optionsType: OptionTypes.SELECT_ONE,
-    optionsList: ConsistencyOptionsList,
-    optionsDesc: ConsistencyDescriptions
+    optionsType: optionTypes.SELECT_ONE,
+    optionsList: consistencyOptionsList,
+    optionsDesc: consistencyDescriptions
   },
   'color': {
     label: 'Color',
-    optionsType: OptionTypes.SELECT_MANY,
-    optionsList: ColorOptionsList,
-    optionsDesc: ColorDescriptions
+    optionsType: optionTypes.SELECT_MANY,
+    optionsList: colorOptionsList,
+    optionsDesc: colorDescriptions
   },
   'count': {
     label: 'Occurrence',
-    optionsType: OptionTypes.SELECT_ONE,
-    optionsList: CountOptionsList,
-    optionsDesc: CountDescriptions
+    optionsType: optionTypes.SELECT_ONE,
+    optionsList: countOptionsList,
+    optionsDesc: countDescriptions
   },
   'flow': {
     label: 'Flow',
-    optionsType: OptionTypes.SELECT_ONE,
-    optionsList: FlowOptionsList,
-    optionsDesc: FlowDescriptions
+    optionsType: optionTypes.SELECT_ONE,
+    optionsList: flowOptionsList,
+    optionsDesc: flowDescriptions
   },
-  'sensation': {
-    label: 'Sensation',
-    optionsType: OptionTypes.BOOLEAN,
-  },
-  'intercourse': {
-    label: 'Intercourse',
-    optionsType: OptionTypes.BOOLEAN,
-  },
-  'peak': {
-    label: 'Peak',
-    optionsType: OptionTypes.BOOLEAN,
+  'other': {
+    label: 'Other',
+    optionsType: optionTypes.SELECT_MANY,
+    optionsList: otherOptionsList,
+    optionsDesc: otherDescriptions
   },
   'notes': {
     label: 'Notes',
-    optionsType: OptionTypes.TEXT,
+    optionsType: optionTypes.TEXT,
   }
 }
 
@@ -229,16 +256,7 @@ export const observationTypesList = [
   'consistency',
   'color',
   'flow',
+  'other',
   'count',
+  'notes'
 ]
-
-// date - calendar
-// flow - select 1
-// consistency - select 1
-// color - select many
-
-// sensation - boolean
-// observation count - select 1
-// intercourse - boolean
-// peak - boolean
-// notes

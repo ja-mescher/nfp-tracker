@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -12,20 +8,35 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import BackIcon from '@material-ui/icons/NavigateBefore';
-import {
-  Link,
-  Redirect
-} from "react-router-dom";
-import format from 'date-fns/format'
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
+import Chip from '@material-ui/core/Chip';
+
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
 
 import {
   observationTypesList,
-  observationTypeOptions } from '../../constants'
+  observationTypeOptions,
+  optionTypes
+} from '../../constants'
 
 const styles = theme => ({
   root: {
     width: '100%',
     backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing.unit * 3,
+    overflow: 'scroll',
+    '-webkit-overflow-scrolling': 'touch',
+  },
+  formControl: {
+    flexGrow: 1,
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
   },
   appBar: {
     position: 'relative',
@@ -33,7 +44,24 @@ const styles = theme => ({
   flex: {
     flex: 1,
   },
-});
+  grid: {
+    margin: 'auto',
+  },
+  chip: {
+    margin: theme.spacing.unit / 2,
+  },
+  textField: {
+    marginTop: 0,
+    width: '100%',
+  },
+  wrapper: {
+    marginTop: theme.spacing.unit,
+    marginBottom: theme.spacing.unit * 2
+  },
+  title: {
+    marginLeft: theme.spacing.unit,
+  }
+})
 
 const capitalize = (s) => {
   return s && s[0].toUpperCase() + s.slice(1);
@@ -43,104 +71,118 @@ const fullDescription = (descriptions) => {
   return descriptions['shortDesc'] + " - " + descriptions['longDesc']
 }
 
-const SelectionItem = ({selectionType, params, pathname}) => {
-  const label = observationTypeOptions[selectionType]['label']
-  const descriptions = observationTypeOptions[selectionType]['optionsDesc']
-  let value = null
-  if(params[selectionType]) {
-    value = fullDescription(descriptions[params[selectionType]])
-  }
-  return (
-    <div>
-      <ListItem
-        button
-        component={Link}
-        to={{ pathname, search: `?edit=${selectionType}`}}
-      >
-        <ListItemText
-          primary={value ? label : 'Add ' + label}
-          secondary={value}
+class Notes extends Component {
+  handleChange = event => {
+    const { onChange } = this.props;
+    onChange(event.target.value)
+  };
+
+  render() {
+    const {
+      value,
+      classes,
+      label
+    } = this.props;
+
+    return (
+      <React.Fragment>
+        <TextField
+          id="notes"
+          label="Notes"
+          multiline
+          rows="4"
+          value={value}
+          onChange={this.handleChange}
+          className={classes.textField}
+          margin="normal"
+          variant="outlined"
         />
-      </ListItem>
-      <Divider />
-    </div>
-  )
+      </React.Fragment>
+    )
+  }
 }
 
-const SelectionList = ({location, params, date}) => (
-    <List component="nav">
-      <ListItem
-        button
-      >
-        <ListItemText
-          primary={'Date'}
-          secondary={format(date, 'EEEE, MMMM do')}
-        />
-      </ListItem>
-      <Divider />
-      {observationTypesList.map(type => (
-        <SelectionItem
-          key={type}
-          selectionType={type}
-          params={params}
-          pathname={location.pathname}
-        />
-      ))}
-    </List>
-)
-
-class ParameterOptions extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      redirect: false,
+class ChipSelectSingle extends Component {
+  handleChange = (option) => {
+    const { value, onChange } = this.props;
+    if(value === option) {
+      onChange(undefined)
     }
-  }
-
-  handleSelect = (value) => {
-    // console.warn(this.props.paramType, value)
-    this.props.handleSelect(this.props.paramType, value)
-    this.setState({redirect: true})
-  }
-
-  clearSelection = () => {
-    this.props.clearSelection(this.props.paramType)
-    this.setState({redirect: true})
+    else {
+      onChange(option)
+    }
   }
 
   render() {
-    const { rootPath, paramType, selectedOption } = this.props
-
-    if(this.state.redirect) {
-      return <Redirect to={rootPath} />
-    }
-
-    const descriptions = observationTypeOptions[paramType]['optionsDesc']
+    const {
+      value,
+      classes,
+      label,
+      optionsList,
+      optionsDesc
+    } = this.props;
 
     return (
-      <List component="nav">
-        <ListItem
-          button
-          onClick={() => this.clearSelection()}
-        >
-            <ListItemText primary={'None'} />
-        </ListItem>
-        <Divider />
-        {observationTypeOptions[paramType]['optionsList'].map(option => {
-          return (
-          <div key={option}>
-            <ListItem
-              button
-              onClick={() => this.handleSelect(option)}
-              selected={selectedOption===option}
-            >
-                <ListItemText primary={descriptions[option]['shortDesc'] + " - " + descriptions[option]['longDesc']} />
-            </ListItem>
-            <Divider />
-          </div>
-          )
-        })}
-      </List>
+      <Paper className={classes.wrapper}>
+        <Typography variant="subtitle1" className={classes.title}>
+          {label}
+        </Typography>
+        {
+          optionsList.map(option => (
+            <Chip
+              key={optionsDesc[option]['shortDesc']}
+              variant={value === option ? 'default' : 'outlined'}
+              onClick={() => this.handleChange(option)}
+              color="primary"
+              label={fullDescription(optionsDesc[option])}
+              className={classes.chip}
+            />
+          ))
+        }
+      </Paper>
+    )
+  }
+}
+
+class ChipSelectMulti extends Component {
+  handleChange = (option) => {
+    const { value, onChange } = this.props;
+    if(value === undefined) {
+      onChange([option])
+    } else if(value.includes(option)) {
+      onChange(value.filter(val => !(val === option)))
+    } else {
+      onChange([...value, option])
+    }
+  }
+
+  render() {
+    const {
+      value,
+      classes,
+      label,
+      optionsList,
+      optionsDesc
+    } = this.props;
+
+    return (
+      <Paper className={classes.wrapper}>
+        <Typography variant="subtitle1" className={classes.title}>
+          {label}
+        </Typography>
+        {
+          optionsList.map(option => (
+            <Chip
+              key={optionsDesc[option]['shortDesc']}
+              variant={value && value.includes(option) ? 'default' : 'outlined'}
+              onClick={() => this.handleChange(option)}
+              color="primary"
+              label={fullDescription(optionsDesc[option])}
+              className={classes.chip}
+            />
+          ))
+        }
+      </Paper>
     )
   }
 }
@@ -149,6 +191,7 @@ class ObservationDetails extends Component {
   constructor(props) {
     super(props);
     const { state: initialParameters } = this.props.location
+    console.warn(initialParameters)
     var date = undefined
     var parameters = {}
     if(initialParameters) {
@@ -164,41 +207,17 @@ class ObservationDetails extends Component {
     }
   }
 
-  handleParamModify = (paramName, value) => {
-    this.setState((state, props) => ({
+  handleChange = name => value => {
+    this.setState({
       changesMade: true,
-      parameters: {...state.parameters, [paramName]: value}
-    }));
-  }
-
-  clearParamSelection = (paramName) => {
-    this.setState((state, props) => {
-      let { [paramName]: omit, ...res } = state.parameters
-      // console.log(paramName, res)
-      return {parameters: res}
-    });
-  }
-
-  handleBack = () => {
-    this.props.history.push(this.props.location.pathname)
-  }
-
-  handleSave = () => {
-    const { match: {params: {profileId}}, setObservationData, handleClose } = this.props
-    const { date, parameters } = this.state
-    setObservationData(profileId, date, parameters).then(() => handleClose())
+      [name]: value
+    })
   }
 
   render() {
-    const { classes, match, location, entryType } = this.props;
+    const { classes, location, entryType } = this.props;
     let params = new URLSearchParams(location.search);
     const edit = params.get("edit")
-    const { date } = this.state;
-    // console.warn(match, location)
-    if(!date) {
-      return <Redirect to={match.url} />
-    }
-    // console.warn(this.state)
 
     let navigateButton = null
     let dialogTitle = null
@@ -213,7 +232,8 @@ class ObservationDetails extends Component {
         </IconButton>
       )
       dialogTitle = capitalize(edit)
-    } else {
+    }
+    else {
       navigateButton = (
         <IconButton
           color="inherit"
@@ -229,7 +249,6 @@ class ObservationDetails extends Component {
       else {
         dialogTitle = "Modify Observation"
       }
-
     }
 
     return (
@@ -246,24 +265,62 @@ class ObservationDetails extends Component {
           </Toolbar>
         </AppBar>
         <div className={classes.root}>
-          {
-            edit ?
-            <ParameterOptions
-              rootPath={location.pathname}
-              paramType={edit}
-              selectedOption={this.state.parameters[edit]}
-              handleSelect={this.handleParamModify}
-              clearSelection={this.clearParamSelection}
-            /> :
-            <SelectionList
-              location={location}
-              params={this.state.parameters}
-              date={date}
-            />
-          }
+          <Grid container spacing={24}>
+            <FormControl
+              component="fieldset"
+              className={classes.formControl}
+            >
+              <Grid item xs={12} sm={6} className={classes.grid}>
+                {observationTypesList.map(type => {
+                  if(
+                    observationTypeOptions[type]['optionsType'] === optionTypes.SELECT_ONE
+                  ) {
+                    return (
+                      <ChipSelectSingle
+                        key={type}
+                        classes={classes}
+                        value={this.state[type]}
+                        onChange={this.handleChange(type)}
+                        {...observationTypeOptions[type]}
+                      />
+                    )
+                  }
+                  else if(
+                    observationTypeOptions[type]['optionsType'] === optionTypes.SELECT_MANY
+                  ) {
+                    return (
+                      <ChipSelectMulti
+                        key={type}
+                        classes={classes}
+                        value={this.state[type]}
+                        onChange={this.handleChange(type)}
+                        {...observationTypeOptions[type]}
+                      />
+                    )
+                  }
+                  else if(
+                    observationTypeOptions[type]['optionsType'] === optionTypes.TEXT
+                  ) {
+                    return (
+                      <Notes
+                        key={type}
+                        classes={classes}
+                        value={this.state[type]}
+                        onChange={this.handleChange(type)}
+                        {...observationTypeOptions[type]}
+                      />
+                    )
+                  }
+                  else {
+                    return null
+                  }
+                })}
+              </Grid>
+            </FormControl>
+          </Grid>
         </div>
       </React.Fragment>
-    );
+    )
   }
 }
 
