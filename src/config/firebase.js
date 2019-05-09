@@ -7,10 +7,10 @@ firebase.initializeApp(FirebaseConfig);
 
 export const databaseRef = firebase.firestore();
 const settings = {
-
+  cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
 };
 databaseRef.settings(settings)
-databaseRef.enablePersistence({experimentalTabSynchronization:true})
+databaseRef.enablePersistence({synchronizeTabs: true})
   .catch(function(err) {
       if (err.code === 'failed-precondition') {
           // Multiple tabs open, persistence can only be enabled
