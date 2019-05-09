@@ -3,6 +3,9 @@ import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
 import ObservationDetails from './ObservationDetails'
 
+import parse from 'date-fns/parse'
+import isValid from 'date-fns/isValid'
+
 function Transition(props) {
   return <Slide direction="up" {...props} />;
 }
@@ -13,12 +16,16 @@ class FullScreenDialog extends React.Component {
   }
 
   render() {
-    const { pathname } = this.props.location;
-    const entryType = pathname.replace(this.props.match.url + '/', '')
-    const isOpen = [
-      'add-new',
-      'modify'
-    ].includes(entryType)
+    const { search } = this.props.location;
+    const params = new URLSearchParams(search);
+
+    const observationDate = parse(
+      params.get('observation'),
+      'yyyy-MM-dd',
+      new Date()
+    )
+
+    const isOpen = isValid(observationDate)
 
     return (
       <div>
@@ -28,10 +35,14 @@ class FullScreenDialog extends React.Component {
           onClose={this.handleClose}
           TransitionComponent={Transition}
         >
-          <ObservationDetails
-            handleClose={this.handleClose}
-            entryType={entryType}
-          />
+          { isOpen ?
+            <ObservationDetails
+              observationDate={observationDate}
+              handleClose={this.handleClose}
+            />
+          : <div>Closed</div>
+          }
+
         </Dialog>
       </div>
     );

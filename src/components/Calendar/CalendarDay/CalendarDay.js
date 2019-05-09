@@ -8,6 +8,7 @@ import getDate from 'date-fns/getDate'
 import isSameDay from 'date-fns/isSameDay'
 import isAfter from 'date-fns/isAfter'
 import isSameMonth from 'date-fns/isSameMonth'
+import format from 'date-fns/format'
 import classNames from 'classnames'
 
 import { observationTypesList, observationTypeOptions } from '../../../constants'
@@ -85,23 +86,17 @@ const CalendarDay = ({ classes, location, day, viewDate, observationData }) => {
 
   const observationDetails = []
   var ariaLabel = "Add"
-  var linkToPathname = `${location.pathname}/add-new`
-  var linkState = {date: day}
   if(observationData) {
     const data = observationData.data
-    const filteredData = {}
     observationTypesList.forEach(obsType => {
       if(data.hasOwnProperty(obsType)) {
         observationDetails.push(
           observationTypeOptions[obsType]['optionsDesc'][data[obsType]]['shortDesc']
         )
-        filteredData[obsType] = data[obsType]
       }
     })
     if(observationDetails.length > 0) {
       ariaLabel = "Modify"
-      linkToPathname = `${location.pathname}/modify`
-      linkState.data = filteredData
     }
   }
 
@@ -122,8 +117,7 @@ const CalendarDay = ({ classes, location, day, viewDate, observationData }) => {
               disabled={isAfter(day,today)}
               component={Link}
               to={{
-                pathname: linkToPathname,
-                state: linkState
+                search: '?observation='+format(day, 'yyyy-MM-dd')
               }}
             >
               {

@@ -255,8 +255,8 @@ export const observationTypeOptions = {
 export const observationTypesList = [
   'consistency',
   'color',
+  'count',
   'flow',
   'other',
-  'count',
   'notes'
 ]

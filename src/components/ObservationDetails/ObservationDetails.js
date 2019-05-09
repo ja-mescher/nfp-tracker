@@ -7,14 +7,16 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
-import BackIcon from '@material-ui/icons/NavigateBefore';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import Chip from '@material-ui/core/Chip';
 
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
+
+import format from 'date-fns/format'
+import isSameDay from 'date-fns/isSameDay'
+import subDays from 'date-fns/subDays'
 
 import {
   observationTypesList,
@@ -51,7 +53,7 @@ const styles = theme => ({
     margin: theme.spacing.unit / 2,
   },
   textField: {
-    marginTop: 0,
+    margin: 0,
     width: '100%',
   },
   wrapper: {
@@ -62,10 +64,6 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
   }
 })
-
-const capitalize = (s) => {
-  return s && s[0].toUpperCase() + s.slice(1);
-}
 
 const fullDescription = (descriptions) => {
   return descriptions['shortDesc'] + " - " + descriptions['longDesc']
@@ -80,12 +78,11 @@ class Notes extends Component {
   render() {
     const {
       value,
-      classes,
-      label
+      classes
     } = this.props;
 
     return (
-      <React.Fragment>
+      <Paper className={classes.wrapper}>
         <TextField
           id="notes"
           label="Notes"
@@ -97,7 +94,7 @@ class Notes extends Component {
           margin="normal"
           variant="outlined"
         />
-      </React.Fragment>
+    </Paper>
     )
   }
 }
@@ -190,74 +187,102 @@ class ChipSelectMulti extends Component {
 class ObservationDetails extends Component {
   constructor(props) {
     super(props);
-    const { state: initialParameters } = this.props.location
-    console.warn(initialParameters)
-    var date = undefined
+    const { observationData, observationDate } = this.props
     var parameters = {}
-    if(initialParameters) {
-      date = initialParameters.date
-      if(initialParameters.data) {
-        parameters = initialParameters.data
+    if(observationData) {
+      if(observationData.data) {
+        parameters = observationData.data
       }
     }
     this.state = {
       changesMade: false,
       parameters,
-      date
+      date: observationDate
+    }
+    this.unsubscribe = null;
+  }
+
+  componentDidMount() {
+    const {
+      fetchObservations,
+      observationDate,
+      match: {params: {profileId}}
+    } = this.props
+    if(observationDate) {
+        this.unsubscribe = fetchObservations(profileId, observationDate, observationDate)
+    }
+  }
+
+  componentWillUnmount() {
+    if(this.unsubscribe) this.unsubscribe()
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const {
+      fetchObservations,
+      observationDate,
+      match: {params: {profileId}}
+    } = this.props
+    if(
+      !isSameDay(observationDate, prevProps.observationDate) ||
+      (profileId !== prevProps.match.params.profileId)
+    ) {
+      if(this.unsubscribe) this.unsubscribe()
+      this.unsubscribe = fetchObservations(profileId, observationDate, observationDate)
     }
   }
 
   handleChange = name => value => {
-    this.setState({
+    this.setState(prevState => ({
       changesMade: true,
-      [name]: value
+      parameters: {
+        ...prevState.parameters,
+        [name]: value
+      }
+    }))
+  }
+
+  handleSave = () => {
+    const {
+      setObservationData,
+      match: {params: {profileId}},
+      handleClose
+    } = this.props
+    const { date, parameters } = this.state
+    setObservationData(profileId, date, parameters).then(result => {
+      handleClose()
     })
   }
 
   render() {
-    const { classes, location, entryType } = this.props;
-    let params = new URLSearchParams(location.search);
-    const edit = params.get("edit")
+    const {
+      classes,
+      observationDate
+    } = this.props;
 
-    let navigateButton = null
-    let dialogTitle = null
-    if(edit) {
-      navigateButton = (
-        <IconButton
-          color="inherit"
-          onClick={this.handleBack}
-          aria-label="Back"
-        >
-          <BackIcon />
-        </IconButton>
-      )
-      dialogTitle = capitalize(edit)
-    }
-    else {
-      navigateButton = (
-        <IconButton
-          color="inherit"
-          onClick={this.props.handleClose}
-          aria-label="Close"
-        >
-          <CloseIcon />
-        </IconButton>
-      )
-      if(entryType === 'add-new') {
-        dialogTitle = "New Observation"
-      }
-      else {
-        dialogTitle = "Modify Observation"
-      }
+    let titleDate = ""
+    const today = new Date()
+    if(isSameDay(today, observationDate)) {
+      titleDate = 'Today, ' + format(observationDate, 'MMM do')
+    } else if(isSameDay(subDays(today, 1), observationDate)) {
+      titleDate = 'Yesterday, ' + format(observationDate, 'MMM do')
+    } else {
+      titleDate = format(observationDate, 'EEE, MMM do')
     }
 
     return (
       <React.Fragment>
         <AppBar className={classes.appBar}>
           <Toolbar>
-            {navigateButton}
+            <IconButton
+              color="inherit"
+              onClick={this.props.handleClose}
+              aria-label="Close"
+            >
+              <CloseIcon />
+            </IconButton>
             <Typography variant="h6" color="inherit" className={classes.flex}>
-              {dialogTitle}
+              {titleDate}
             </Typography>
             <Button color="inherit" disabled={!this.state.changesMade} onClick={this.handleSave}>
               save
@@ -279,7 +304,7 @@ class ObservationDetails extends Component {
                       <ChipSelectSingle
                         key={type}
                         classes={classes}
-                        value={this.state[type]}
+                        value={this.state.parameters[type]}
                         onChange={this.handleChange(type)}
                         {...observationTypeOptions[type]}
                       />
@@ -292,7 +317,7 @@ class ObservationDetails extends Component {
                       <ChipSelectMulti
                         key={type}
                         classes={classes}
-                        value={this.state[type]}
+                        value={this.state.parameters[type]}
                         onChange={this.handleChange(type)}
                         {...observationTypeOptions[type]}
                       />
@@ -305,7 +330,7 @@ class ObservationDetails extends Component {
                       <Notes
                         key={type}
                         classes={classes}
-                        value={this.state[type]}
+                        value={this.state.parameters[type]}
                         onChange={this.handleChange(type)}
                         {...observationTypeOptions[type]}
                       />
